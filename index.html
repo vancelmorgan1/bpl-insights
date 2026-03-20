@@ -5,124 +5,159 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>BPL Insights — Content Analytics</title>
 <script src="assets.js"></script>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg:#f5f6f8;--surface:#fff;--surface2:#f0f1f4;--border:#e2e4ea;--border2:#d0d3dc;
+  --bg:#f5f6f8;--surface:#fff;--border:#e2e4ea;--border2:#d0d3dc;
   --accent:#0e7c4a;--accent-light:#e8f5ee;--accent-mid:#1a9e5f;
-  --text:#1a1d27;--text2:#4a5068;--text3:#8b91a8;--user-bg:#eef0f7;
+  --text:#1a1d27;--text2:#4a5068;--text3:#8b91a8;
   --green:#1a9e5f;--blue:#2e6fda;--amber:#d97706;--red:#dc2626;
-  --tg-bg:#e8f5ee;--tg-t:#0e7c4a;--tb-bg:#e8f0fd;--tb-t:#1d4ed8;
-  --ta-bg:#fef3c7;--ta-t:#92400e;--tr-bg:#fee2e2;--tr-t:#991b1b;
+  --tg-bg:#e8f5ee;--tg-t:#0e7c4a;
+  --ta-bg:#fef3c7;--ta-t:#92400e;
+  --tr-bg:#fee2e2;--tr-t:#991b1b;
+  --tb-bg:#e8f0fd;--tb-t:#1d4ed8;
   --shadow:0 1px 3px rgba(0,0,0,.08),0 1px 2px rgba(0,0,0,.04);
+  --shadow-md:0 4px 12px rgba(0,0,0,.1);
 }
 *{margin:0;padding:0;box-sizing:border-box;}
-body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;height:100vh;display:flex;flex-direction:column;overflow:hidden;font-size:14px;}
+body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-height:100vh;font-size:14px;}
 
-header{display:flex;align-items:center;justify-content:space-between;padding:12px 24px;border-bottom:1px solid var(--border);background:var(--surface);flex-shrink:0;box-shadow:var(--shadow);}
-.logo{width:34px;height:34px;background:var(--accent);border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:16px;color:#fff;}
-.header-title{font-size:16px;font-weight:600;}
-.header-sub{font-size:11px;color:var(--text3);font-family:'IBM Plex Mono',monospace;margin-top:1px;}
+/* ── HEADER ── */
+header{background:var(--surface);border-bottom:1px solid var(--border);padding:0 32px;display:flex;align-items:center;justify-content:space-between;height:56px;box-shadow:var(--shadow);position:sticky;top:0;z-index:100;}
+.logo{width:32px;height:32px;background:var(--accent);border-radius:7px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:15px;color:#fff;flex-shrink:0;}
+.header-title{font-size:15px;font-weight:600;}
+.header-sub{font-size:11px;color:var(--text3);font-family:'IBM Plex Mono',monospace;}
 .badge-g{padding:4px 10px;border-radius:20px;font-size:11px;font-weight:500;background:var(--tg-bg);color:var(--tg-t);border:1px solid #b6dfc8;}
-.badge-live{display:flex;align-items:center;gap:5px;background:var(--surface);border:1px solid var(--border2);padding:4px 10px;border-radius:20px;font-size:11px;color:var(--text2);font-family:'IBM Plex Mono',monospace;}
-.live-dot{width:6px;height:6px;border-radius:50%;background:var(--green);animation:pulse 2s infinite;}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
 
-.tab-nav{display:flex;align-items:center;gap:2px;padding:0 24px;background:var(--surface);border-bottom:1px solid var(--border);flex-shrink:0;}
-.tab-btn{padding:10px 16px;font-size:13px;font-weight:500;color:var(--text3);border:none;background:transparent;cursor:pointer;border-bottom:2px solid transparent;transition:all .15s;font-family:'Inter',sans-serif;display:flex;align-items:center;gap:6px;}
-.tab-btn:hover{color:var(--text2);}
-.tab-btn.active{color:var(--accent);border-bottom-color:var(--accent);}
+/* ── LAYOUT ── */
+.page{max-width:1280px;margin:0 auto;padding:24px 32px;}
 
-.main{display:flex;flex:1;overflow:hidden;}
+/* ── HOME: OVERVIEW STATS ── */
+.overview-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:28px;}
+.stat-tile{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px 18px;box-shadow:var(--shadow);}
+.stat-tile-lbl{font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px;font-family:'IBM Plex Mono',monospace;}
+.stat-tile-val{font-size:28px;font-weight:700;color:var(--text);line-height:1;}
+.stat-tile-sub{font-size:11px;color:var(--text2);margin-top:4px;}
+.stat-tile-hi{color:var(--accent);font-weight:600;}
 
-/* SIDEBAR */
-.sidebar{width:236px;border-right:1px solid var(--border);background:var(--surface);display:flex;flex-direction:column;flex-shrink:0;overflow-y:auto;}
-.sidebar::-webkit-scrollbar{width:3px;}
-.sidebar::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px;}
-.sb-sec{padding:14px 16px;border-bottom:1px solid var(--border);}
-.sb-lbl{font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px;font-family:'IBM Plex Mono',monospace;}
-.mc{padding:10px 12px;background:var(--bg);border:1px solid var(--border);border-radius:8px;margin-bottom:6px;}
-.mc-lbl{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px;font-weight:500;}
-.mc-val{font-size:22px;font-weight:600;color:var(--text);line-height:1.1;}
-.mc-sub{font-size:11px;color:var(--text2);margin-top:3px;}
-.mc-hi{color:var(--accent);font-weight:600;}
-.qq{width:100%;text-align:left;padding:8px 10px;margin-bottom:3px;background:transparent;border:1px solid var(--border);border-radius:7px;color:var(--text2);font-family:'Inter',sans-serif;font-size:12px;cursor:pointer;transition:all .14s;line-height:1.4;}
-.qq:hover{background:var(--accent-light);border-color:#b6dfc8;color:var(--text);}
-.qq .qi{display:block;font-size:10px;color:var(--accent);margin-bottom:2px;font-family:'IBM Plex Mono',monospace;font-weight:500;}
+/* ── SECTION HEADER ── */
+.section-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+.section-title{font-size:13px;font-weight:600;color:var(--text);display:flex;align-items:center;gap:8px;}
+.section-title::after{content:'';flex:1;height:1px;background:var(--border);margin-left:10px;min-width:20px;}
+.section-sub{font-size:11px;color:var(--text3);font-family:'IBM Plex Mono',monospace;}
 
-/* BROWSE */
-.browse-toolbar{display:flex;align-items:center;gap:8px;padding:12px 20px;background:var(--surface);border-bottom:1px solid var(--border);flex-shrink:0;flex-wrap:wrap;}
-.search-box{flex:1;min-width:220px;padding:8px 14px;background:var(--bg);border:1.5px solid var(--border2);border-radius:8px;font-size:13px;font-family:'Inter',sans-serif;color:var(--text);outline:none;transition:border-color .15s;}
-.search-box:focus{border-color:var(--accent-mid);}
-.search-box::placeholder{color:var(--text3);}
-select.filt{padding:7px 10px;background:var(--bg);border:1.5px solid var(--border2);border-radius:8px;font-size:12px;font-family:'Inter',sans-serif;color:var(--text2);outline:none;cursor:pointer;}
-.browse-count{font-size:12px;color:var(--text3);font-family:'IBM Plex Mono',monospace;flex-shrink:0;margin-left:auto;}
-.browse-grid{flex:1;overflow-y:auto;padding:16px 20px;display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:8px;align-content:start;}
-.browse-grid::-webkit-scrollbar{width:4px;}
-.browse-grid::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px;}
+/* ── PRODUCT GRID (home) ── */
+.product-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px;margin-bottom:32px;}
+.product-tile{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 16px;cursor:pointer;transition:all .14s;box-shadow:var(--shadow);}
+.product-tile:hover{border-color:var(--accent-mid);box-shadow:var(--shadow-md);transform:translateY(-1px);}
+.pt-bucket{font-size:11px;font-weight:600;padding:2px 8px;border-radius:4px;display:inline-block;margin-bottom:8px;}
+.pt-total{font-size:24px;font-weight:700;color:var(--text);line-height:1;}
+.pt-label{font-size:11px;color:var(--text3);margin-top:2px;font-family:'IBM Plex Mono',monospace;}
+.pt-bar{height:3px;background:var(--border);border-radius:2px;margin-top:10px;overflow:hidden;}
+.pt-bar-fill{height:100%;border-radius:2px;background:var(--accent);}
+.pt-meta{display:flex;justify-content:space-between;margin-top:6px;font-size:10px;color:var(--text3);}
 
-.asset-card{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:12px 14px;cursor:pointer;transition:all .13s;position:relative;}
-.asset-card:hover{box-shadow:0 2px 8px rgba(0,0,0,.09);border-color:#b6dfc8;}
-.ac-name{font-size:13px;font-weight:600;color:var(--text);line-height:1.4;margin-bottom:6px;padding-right:16px;}
-.ac-row{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:4px;}
-.ac-badge{font-size:10px;padding:2px 7px;border-radius:4px;font-weight:500;}
-.ac-stats{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:8px;}
-.ac-stat{padding:7px 9px;background:var(--bg);border:1px solid var(--border);border-radius:6px;}
-.ac-stat-lbl{font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:2px;}
-.ac-stat-val{font-size:16px;font-weight:600;color:var(--text);line-height:1;}
-.ac-stat-sub{font-size:9px;color:var(--text3);font-family:'IBM Plex Mono',monospace;margin-top:1px;}
-.adobe-dot{position:absolute;top:12px;right:12px;width:7px;height:7px;border-radius:50%;}
-.vtd-bar{height:3px;background:var(--border);border-radius:2px;overflow:hidden;margin-top:6px;}
-.vtd-fill{height:100%;background:var(--blue);border-radius:2px;}
-.vtd-lbl{font-size:9px;color:var(--text3);margin-top:2px;font-family:'IBM Plex Mono',monospace;}
-.no-results{grid-column:1/-1;padding:60px 24px;text-align:center;color:var(--text3);font-size:13px;}
+/* ── SEARCH BAR ── */
+.search-wrap{position:relative;margin-bottom:28px;}
+.search-input{width:100%;padding:11px 16px 11px 40px;background:var(--surface);border:1.5px solid var(--border2);border-radius:10px;font-size:14px;font-family:'Inter',sans-serif;color:var(--text);outline:none;transition:border-color .15s;box-shadow:var(--shadow);}
+.search-input:focus{border-color:var(--accent-mid);}
+.search-input::placeholder{color:var(--text3);}
+.search-icon{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--text3);font-size:15px;pointer-events:none;}
+.search-results{background:var(--surface);border:1px solid var(--border);border-radius:10px;box-shadow:var(--shadow-md);position:absolute;top:calc(100% + 4px);left:0;right:0;z-index:50;max-height:360px;overflow-y:auto;display:none;}
+.search-results.open{display:block;}
+.sr-item{padding:10px 16px;cursor:pointer;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;transition:background .1s;}
+.sr-item:last-child{border-bottom:none;}
+.sr-item:hover{background:var(--accent-light);}
+.sr-name{font-size:13px;font-weight:500;color:var(--text);flex:1;}
+.sr-meta{font-size:11px;color:var(--text3);text-align:right;flex-shrink:0;}
+.sr-badge{font-size:10px;padding:1px 6px;border-radius:3px;font-weight:500;flex-shrink:0;}
+.sr-empty{padding:24px;text-align:center;color:var(--text3);font-size:13px;}
 
-/* CHAT */
-.chat-area{flex:1;display:flex;flex-direction:column;overflow:hidden;}
-.messages{flex:1;overflow-y:auto;padding:24px 28px;display:flex;flex-direction:column;gap:18px;scroll-behavior:smooth;}
-.messages::-webkit-scrollbar{width:4px;}
-.messages::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px;}
-.msg{display:flex;gap:10px;max-width:800px;animation:fadeUp .2s ease forwards;opacity:0;transform:translateY(6px);}
-@keyframes fadeUp{to{opacity:1;transform:translateY(0)}}
-.msg.user{flex-direction:row-reverse;align-self:flex-end;}
-.av{width:30px;height:30px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;flex-shrink:0;}
-.av.bot{background:var(--accent);color:#fff;font-size:14px;}
-.av.usr{background:var(--user-bg);border:1px solid var(--border2);color:var(--text2);font-size:10px;font-family:'IBM Plex Mono',monospace;}
-.bubble{padding:12px 16px;border-radius:12px;font-size:14px;line-height:1.65;max-width:680px;color:var(--text);}
-.bubble.bot{background:var(--surface);border:1px solid var(--border);border-top-left-radius:3px;box-shadow:var(--shadow);}
-.bubble.user{background:var(--user-bg);border:1px solid var(--border2);border-top-right-radius:3px;}
-.bubble.bot table{width:100%;border-collapse:collapse;margin:10px 0;font-size:12px;}
-.bubble.bot th{text-align:left;padding:5px 8px;background:var(--bg);border:1px solid var(--border);font-size:11px;color:var(--text3);font-family:'IBM Plex Mono',monospace;font-weight:600;text-transform:uppercase;letter-spacing:.05em;}
-.bubble.bot td{padding:5px 8px;border:1px solid var(--border);color:var(--text2);}
-.bubble.bot td:first-child{font-weight:500;color:var(--text);}
-.bubble.bot tr:nth-child(even) td{background:var(--bg);}
-.bubble.bot strong{color:var(--text);font-weight:600;}
-.bubble.bot ul,.bubble.bot ol{padding-left:18px;margin:6px 0;}
-.bubble.bot li{margin-bottom:3px;color:var(--text2);}
-.bubble.bot h3{font-size:13px;font-weight:600;color:var(--text);margin:10px 0 5px;}
-.typing-bub{display:flex;gap:4px;align-items:center;padding:4px 0;}
-.typing-bub span{width:6px;height:6px;background:var(--text3);border-radius:50%;animation:bounce 1.2s infinite;}
-.typing-bub span:nth-child(2){animation-delay:.2s;}
-.typing-bub span:nth-child(3){animation-delay:.4s;}
-@keyframes bounce{0%,80%,100%{transform:translateY(0);opacity:.4}40%{transform:translateY(-5px);opacity:1}}
-.input-area{padding:14px 28px 18px;border-top:1px solid var(--border);background:var(--surface);flex-shrink:0;}
-.input-row{display:flex;gap:10px;align-items:flex-end;}
-textarea{width:100%;padding:11px 16px;background:var(--bg);border:1.5px solid var(--border2);border-radius:10px;color:var(--text);font-family:'Inter',sans-serif;font-size:14px;resize:none;outline:none;line-height:1.5;min-height:44px;max-height:120px;transition:border-color .15s;}
-textarea::placeholder{color:var(--text3);}
-textarea:focus{border-color:var(--accent-mid);}
-.send-btn{width:44px;height:44px;background:var(--accent);border:none;border-radius:10px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .14s;flex-shrink:0;color:#fff;}
-.send-btn:hover{background:var(--accent-mid);}
-.send-btn:disabled{background:var(--border2);cursor:not-allowed;}
-.send-btn svg{width:17px;height:17px;}
-.input-hint{font-size:11px;color:var(--text3);margin-top:8px;font-family:'IBM Plex Mono',monospace;}
-.welcome{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:40px;text-align:center;}
-.welcome-icon{width:52px;height:52px;background:var(--accent);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:700;color:#fff;margin-bottom:10px;}
-.welcome h2{font-size:22px;font-weight:600;}
-.welcome p{font-size:14px;color:var(--text2);max-width:440px;line-height:1.65;margin-top:4px;}
-.chips{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:18px;max-width:620px;}
-.chip{padding:8px 14px;background:var(--surface);border:1.5px solid var(--border2);border-radius:20px;font-size:12px;font-weight:500;color:var(--text2);cursor:pointer;transition:all .14s;}
-.chip:hover{background:var(--accent-light);border-color:#b6dfc8;color:var(--accent);}
-.note-amber{display:flex;gap:8px;padding:10px 12px;border-radius:7px;font-size:12px;line-height:1.55;margin-top:10px;background:var(--ta-bg);border:1px solid #fcd34d;color:var(--ta-t);}
+/* ── PRODUCT VIEW ── */
+.product-view{display:none;}
+.product-view.active{display:block;}
+.back-btn{display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--text2);cursor:pointer;margin-bottom:20px;padding:6px 12px 6px 8px;border-radius:6px;border:1px solid var(--border);background:var(--surface);box-shadow:var(--shadow);transition:all .13s;}
+.back-btn:hover{border-color:var(--accent-mid);color:var(--accent);}
+
+.product-header{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px 24px;margin-bottom:20px;box-shadow:var(--shadow);}
+.ph-top{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:16px;}
+.ph-title{font-size:22px;font-weight:700;color:var(--text);}
+.ph-sub{font-size:13px;color:var(--text2);margin-top:3px;}
+.ph-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;}
+.ph-stat{padding:10px 12px;background:var(--bg);border:1px solid var(--border);border-radius:8px;}
+.ph-stat-lbl{font-size:9px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px;font-family:'IBM Plex Mono',monospace;}
+.ph-stat-val{font-size:20px;font-weight:700;color:var(--text);line-height:1;}
+.ph-stat-sub{font-size:10px;color:var(--text3);margin-top:2px;}
+
+/* ── ASSET TABLE ── */
+.asset-table-wrap{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;box-shadow:var(--shadow);margin-bottom:20px;}
+.at-toolbar{display:flex;align-items:center;gap:8px;padding:12px 16px;border-bottom:1px solid var(--border);background:var(--bg);}
+.at-title{font-size:12px;font-weight:600;color:var(--text2);flex:1;}
+.at-sort{padding:5px 10px;border-radius:6px;font-size:11px;border:1px solid var(--border2);background:var(--surface);color:var(--text2);cursor:pointer;font-family:'Inter',sans-serif;outline:none;}
+.at-sort.on{background:var(--accent-light);border-color:#b6dfc8;color:var(--accent);}
+table.asset-tbl{width:100%;border-collapse:collapse;}
+table.asset-tbl th{text-align:left;padding:9px 14px;font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;font-family:'IBM Plex Mono',monospace;border-bottom:1px solid var(--border);background:var(--bg);cursor:pointer;user-select:none;white-space:nowrap;}
+table.asset-tbl th:hover{color:var(--accent);}
+table.asset-tbl td{padding:9px 14px;border-bottom:1px solid var(--border);font-size:13px;color:var(--text2);vertical-align:middle;}
+table.asset-tbl tr:last-child td{border-bottom:none;}
+table.asset-tbl tr:hover td{background:var(--accent-light);cursor:pointer;}
+.tbl-name{font-weight:500;color:var(--text);}
+.tbl-type{font-size:11px;color:var(--text3);}
+.signal{display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:4px;font-size:11px;font-weight:500;white-space:nowrap;}
+.signal-good{background:var(--tg-bg);color:var(--tg-t);}
+.signal-ok{background:#f0f9ff;color:#0369a1;}
+.signal-low{background:var(--ta-bg);color:var(--ta-t);}
+.signal-vtd{background:var(--tb-bg);color:var(--tb-t);}
+.bar-cell{width:80px;}
+.inline-bar{height:5px;background:var(--border);border-radius:3px;overflow:hidden;}
+.inline-bar-fill{height:100%;border-radius:3px;background:var(--accent);}
+
+/* ── ASSET DETAIL ── */
+.asset-detail-view{display:none;}
+.asset-detail-view.active{display:block;}
+.ad-header{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px 24px;margin-bottom:16px;box-shadow:var(--shadow);}
+.ad-title{font-size:20px;font-weight:700;color:var(--text);margin-bottom:6px;}
+.ad-meta{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:16px;}
+.ad-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px;}
+.ad-stat{padding:12px 14px;background:var(--bg);border:1px solid var(--border);border-radius:8px;}
+.ad-stat-lbl{font-size:9px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px;font-family:'IBM Plex Mono',monospace;}
+.ad-stat-val{font-size:22px;font-weight:700;color:var(--text);line-height:1;}
+.ad-stat-sub{font-size:10px;color:var(--text2);margin-top:3px;}
+
+.benchmark-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.benchmark-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px;box-shadow:var(--shadow);}
+.bc-title{font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;font-family:'IBM Plex Mono',monospace;margin-bottom:12px;}
+.bc-row{display:flex;align-items:center;gap:8px;margin-bottom:8px;}
+.bc-label{font-size:12px;color:var(--text2);width:100px;flex-shrink:0;}
+.bc-track{flex:1;height:6px;background:var(--border);border-radius:3px;overflow:hidden;}
+.bc-fill{height:100%;border-radius:3px;}
+.bc-val{font-size:12px;font-family:'IBM Plex Mono',monospace;color:var(--text);width:60px;text-align:right;flex-shrink:0;}
+.bc-you{font-weight:600;}
+
+.similar-assets{margin-top:16px;}
+
+/* ── NOTES ── */
+.note{display:flex;gap:8px;padding:10px 14px;border-radius:8px;font-size:12px;line-height:1.55;margin-top:12px;}
+.note-amber{background:var(--ta-bg);border:1px solid #fcd34d;color:var(--ta-t);}
+.note-blue{background:var(--tb-bg);border:1px solid #bfdbfe;color:var(--tb-t);}
+.note-green{background:var(--tg-bg);border:1px solid #b6dfc8;color:var(--tg-t);}
+
+/* ── BUCKET COLORS ── */
+.bc-ITSM{background:#dbeafe;color:#1e40af;}
+.bc-CMDB{background:#dcfce7;color:#166534;}
+.bc-AI{background:#faf5ff;color:#581c87;}
+.bc-HAM{background:#fef9c3;color:#854d0e;}
+.bc-CSM{background:#ecfeff;color:#164e63;}
+.bc-SPM{background:#ede9fe;color:#4c1d95;}
+.bc-GRC{background:#fce7f3;color:#9d174d;}
+.bc-ESM{background:#f0fdf4;color:#14532d;}
+.bc-HRSD{background:#ffedd5;color:#9a3412;}
+.bc-Fin{background:#fef3c7;color:#78350f;}
+.bc-SecOps{background:#fee2e2;color:#991b1b;}
+.bc-FSM{background:#e0f2fe;color:#075985;}
+.bc-Platform{background:#f3f4f6;color:#374151;}
+.bc-Telecom{background:#f5f3ff;color:#4338ca;}
+.bc-Industry{background:#f1f5f9;color:#334155;}
 </style>
 </head>
 <body>
@@ -137,370 +172,453 @@ textarea:focus{border-color:var(--accent-mid);}
   </div>
   <div style="display:flex;align-items:center;gap:8px;">
     <div class="badge-g">✓ Oct 1, 2025 – Mar 20, 2026</div>
-    <div class="badge-live"><div class="live-dot"></div>Adobe Analytics + Now Create</div>
   </div>
 </header>
 
-<div class="tab-nav">
-  <button class="tab-btn active" id="tab-browse" onclick="switchTab('browse')">🔍 Browse Assets</button>
-  <button class="tab-btn" id="tab-chat" onclick="switchTab('chat')">💬 Ask Claude</button>
-</div>
+<div class="page">
 
-<div class="main">
+  <!-- HOME VIEW -->
+  <div id="view-home">
 
-  <div class="sidebar">
-    <div class="sb-sec">
-      <div class="sb-lbl">Oct 1, 2025 – Mar 20, 2026</div>
-      <div class="mc">
-        <div class="mc-lbl">Total Assets</div>
-        <div class="mc-val">869</div>
-        <div class="mc-sub">in Now Create BPL</div>
+    <!-- Overview stats -->
+    <div class="overview-stats">
+      <div class="stat-tile">
+        <div class="stat-tile-lbl">Total Assets</div>
+        <div class="stat-tile-val">869</div>
+        <div class="stat-tile-sub">in Now Create BPL</div>
       </div>
-      <div class="mc">
-        <div class="mc-lbl">Period Downloads</div>
-        <div class="mc-val">105,724</div>
-        <div class="mc-sub">53 assets tracked in Adobe</div>
+      <div class="stat-tile">
+        <div class="stat-tile-lbl">Period Downloads</div>
+        <div class="stat-tile-val">105,724</div>
+        <div class="stat-tile-sub">Oct 2025 – Mar 2026</div>
       </div>
-      <div class="mc">
-        <div class="mc-lbl">Top Asset (Lifetime)</div>
-        <div class="mc-val" style="font-size:14px;line-height:1.3">Incident Management - Process Guide</div>
-        <div class="mc-sub"><span class="mc-hi">27,746</span> lifetime downloads</div>
+      <div class="stat-tile">
+        <div class="stat-tile-lbl">Lifetime Downloads</div>
+        <div class="stat-tile-val">2,004,426</div>
+        <div class="stat-tile-sub">all-time across 869 assets</div>
+      </div>
+      <div class="stat-tile">
+        <div class="stat-tile-lbl">Median Asset Downloads</div>
+        <div class="stat-tile-val">1,044</div>
+        <div class="stat-tile-sub"><span class="stat-tile-hi">Top 10%</span> exceed 6,144</div>
       </div>
     </div>
-    <div class="sb-sec">
-      <div class="sb-lbl">Browse by Product</div>
-      <button class="qq" onclick="filterBucket('ITSM')"><span class="qi">↓ ITSM</span>57 assets · 337,972 lifetime dl</button>
-      <button class="qq" onclick="filterBucket('CMDB/CSDM')"><span class="qi">↓ CMDB/CSDM</span>39 assets · 278,470 lifetime dl</button>
-      <button class="qq" onclick="filterBucket('Now Assist/AI')"><span class="qi">↓ NOW ASSIST/AI</span>100 assets · 166,853 lifetime dl</button>
-      <button class="qq" onclick="filterBucket('HAM/SAM')"><span class="qi">↓ HAM/SAM</span>22 assets · 122,593 lifetime dl</button>
-      <button class="qq" onclick="filterBucket('CSM')"><span class="qi">↓ CSM</span>64 assets · 109,615 lifetime dl</button>
-      <button class="qq" onclick="filterBucket('SPM/PPM')"><span class="qi">↓ SPM/PPM</span>27 assets · 109,503 lifetime dl</button>
-      <button class="qq" onclick="filterBucket('Financial Services')"><span class="qi">↓ FINANCIAL SERVICES</span>80 assets · 41,547 lifetime dl</button>
-      <button class="qq" onclick="filterBucket('GRC/IRM')"><span class="qi">↓ GRC/IRM</span>35 assets</button>
-      <button class="qq" onclick="filterBucket('ESM')"><span class="qi">↓ ESM</span>76 assets</button>
-      <button class="qq" onclick="filterBucket('')"><span class="qi">◎ ALL</span>Clear filter, show all</button>
+
+    <!-- Search -->
+    <div class="search-wrap" id="search-wrap">
+      <span class="search-icon">🔍</span>
+      <input class="search-input" id="search-input" placeholder="Search for an asset by name, product area, or type…" autocomplete="off" oninput="onSearch(this.value)" onfocus="onSearch(this.value)">
+      <div class="search-results" id="search-results"></div>
     </div>
-    <div class="sb-sec">
-      <div class="sb-lbl">Ask Claude</div>
-      <button class="qq" onclick="goChat('Which Financial Services assets have the most lifetime downloads?')"><span class="qi">★ FINANCIAL SERVICES</span>Financial Services top assets</button>
-      <button class="qq" onclick="goChat('What Now Assist assets exist and how do they perform? Show top 15 by lifetime downloads')"><span class="qi">↓ NOW ASSIST/AI</span>Now Assist asset overview</button>
-      <button class="qq" onclick="goChat('Which assets have a high view-to-download ratio — people browsing but not downloading?')"><span class="qi">↗ ENGAGEMENT</span>High views, low downloads</button>
-      <button class="qq" onclick="goChat('Show me all HRSD assets sorted by lifetime downloads')"><span class="qi">↓ HRSD</span>All HRSD assets ranked</button>
-      <button class="qq" onclick="goChat('Compare ITSM vs CMDB/CSDM: total assets, lifetime downloads, and which specific assets are driving the most traffic')"><span class="qi">⇄ COMPARE</span>ITSM vs CMDB/CSDM</button>
+
+    <!-- Product grid -->
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+      <div style="font-size:13px;font-weight:600;color:var(--text);">Browse by Product Area</div>
+      <div style="font-size:11px;color:var(--text3);font-family:'IBM Plex Mono',monospace;">click any area to drill in</div>
     </div>
+    <div class="product-grid" id="product-grid"></div>
+
+    <div class="note note-amber">⚠ Period download data (Oct–Mar) is available for 53 assets tracked in Adobe Analytics. Lifetime data covers all 869 assets from the Now Create snapshot (Mar 18, 2026). Green dot on asset cards = in Adobe export.</div>
+
+  </div><!-- /view-home -->
+
+  <!-- PRODUCT VIEW -->
+  <div id="view-product" class="product-view">
+    <button class="back-btn" onclick="showHome()">← All product areas</button>
+    <div id="product-content"></div>
   </div>
 
-  <!-- BROWSE PANEL -->
-  <div id="panel-browse" style="display:flex;flex:1;overflow:hidden;flex-direction:column;">
-    <div class="browse-toolbar">
-      <input class="search-box" id="browse-search" placeholder="Search assets by name, product, or asset type…" oninput="renderBrowse()">
-      <select class="filt" id="filt-bucket" onchange="renderBrowse()">
-        <option value="">All products</option>
-        <option>ITSM</option><option>CMDB/CSDM</option><option>Now Assist/AI</option>
-        <option>HAM/SAM</option><option>CSM</option><option>SPM/PPM</option>
-        <option>GRC/IRM</option><option>ESM</option><option>HRSD</option>
-        <option>Financial Services</option><option>SecOps</option><option>FSM</option>
-        <option>Platform</option><option>Telecom</option><option>Industry</option>
-      </select>
-      <select class="filt" id="filt-type" onchange="renderBrowse()">
-        <option value="">All types</option>
-        <option>Process Guide</option><option>Process Workshop Presentation</option>
-        <option>Starter Stories</option><option>Implementation Guide</option>
-        <option>Program Guide</option><option>Project Template</option>
-        <option>Recommended Implementation Sequence</option><option>Scoping Guide</option>
-        <option>Product White Paper</option><option>Implementation Insights</option>
-        <option>Product Workbook</option><option>Knowledge Transfer</option>
-      </select>
-      <select class="filt" id="filt-sort" onchange="renderBrowse()">
-        <option value="lifetime_dl">Sort: Lifetime downloads ↓</option>
-        <option value="period_dl">Sort: Period downloads ↓</option>
-        <option value="name">Sort: A–Z</option>
-        <option value="vtd">Sort: Views/download ratio ↓</option>
-      </select>
-      <label style="display:flex;align-items:center;gap:5px;font-size:12px;color:var(--text2);cursor:pointer;">
-        <input type="checkbox" id="filt-adobe" onchange="renderBrowse()" style="cursor:pointer;">
-        Adobe only
-      </label>
-      <div class="browse-count" id="browse-count"></div>
-    </div>
-    <div class="browse-grid" id="browse-grid"></div>
+  <!-- ASSET DETAIL VIEW -->
+  <div id="view-asset" class="asset-detail-view">
+    <button class="back-btn" id="asset-back-btn" onclick="backFromAsset()">← Back</button>
+    <div id="asset-content"></div>
   </div>
 
-  <!-- CHAT PANEL -->
-  <div id="panel-chat" style="display:none;flex:1;overflow:hidden;">
-    <div class="chat-area">
-      <div class="messages" id="messages">
-        <div class="welcome" id="welcome">
-          <div class="welcome-icon">B</div>
-          <h2>Ask Claude about BPL assets</h2>
-          <p>Type your question below. We'll build a prompt with the full 869-asset dataset and copy it to your clipboard — then open Claude for you. Just paste and go.</p>
-          <div style="margin-top:14px;padding:10px 14px;background:var(--tg-bg);border:1px solid #b6dfc8;border-radius:8px;font-size:12px;color:var(--tg-t);max-width:440px;line-height:1.6;">
-            ✓ Works with your existing Claude.ai access<br>
-            ✓ Full dataset included in every prompt<br>
-            ✓ No API key or infrastructure needed
-          </div>
-          <div class="chips">
-            <div class="chip" onclick="quickQuery('Which Financial Services assets have the most lifetime downloads? Show a ranked table with asset name, type, lifetime downloads, and lifetime views.')">Financial Services top assets</div>
-            <div class="chip" onclick="quickQuery('What HRSD assets exist? Show all of them ranked by lifetime downloads with asset type and view-to-download ratio.')">HRSD asset overview</div>
-            <div class="chip" onclick="quickQuery('Show me all Now Assist/AI assets sorted by lifetime downloads — top 25. Include asset type and note any with unusually high view-to-download ratios.')">Now Assist/AI assets</div>
-            <div class="chip" onclick="quickQuery('Which assets have the highest view-to-download ratio (lifetime views ÷ lifetime downloads)? Show top 20. High ratio means people browse but don\'t download.')">High views, low downloads</div>
-            <div class="chip" onclick="quickQuery('Which product areas have the most assets but the lowest average downloads per asset? Show a table of bucket, asset count, total lifetime downloads, and average per asset.')">Coverage gaps</div>
-            <div class="chip" onclick="quickQuery('List all Scoping Guide assets with their bucket, lifetime downloads, and lifetime views, sorted by downloads.')">All Scoping Guides</div>
-            <div class="chip" onclick="quickQuery('Compare ITSM vs CMDB/CSDM: total assets, total lifetime downloads, average downloads per asset, and top 5 assets in each.')">ITSM vs CMDB/CSDM</div>
-            <div class="chip" onclick="quickQuery('Which assets have over 5,000 lifetime downloads but zero period downloads (not in the Adobe Oct–Mar export)? These are hidden high performers worth investigating.')">Hidden high performers</div>
-          </div>
-        </div>
-      </div>
-      <div class="input-area">
-        <div id="copy-status" style="display:none;margin-bottom:8px;padding:8px 12px;background:var(--tg-bg);border:1px solid #b6dfc8;border-radius:6px;font-size:12px;color:var(--tg-t);"></div>
-        <div class="input-row">
-          <div style="flex:1;">
-            <textarea id="input" placeholder="Ask anything about BPL assets, products, or download performance…" rows="1"
-              onkeydown="handleKey(event)" oninput="autoResize(this)"></textarea>
-          </div>
-          <button class="send-btn" id="send-btn" onclick="sendMessage()" title="Copy prompt &amp; open Claude">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-              <line x1="22" y1="2" x2="11" y2="13"></line>
-              <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
-            </svg>
-          </button>
-        </div>
-        <div class="input-hint">↑ Copies a data-rich prompt to clipboard and opens Claude.ai — paste to get your answer</div>
-      </div>
-    </div>
-  </div>
-
-</div>
+</div><!-- /page -->
 
 <script>
-// ─── BUCKET COLOR MAP ───
-const BUCKET_COLORS = {
-  'ITSM':              {bg:'#dbeafe',t:'#1e40af'},
-  'CMDB/CSDM':         {bg:'#dcfce7',t:'#166534'},
-  'Now Assist/AI':     {bg:'#faf5ff',t:'#581c87'},
-  'HAM/SAM':           {bg:'#fef9c3',t:'#854d0e'},
-  'CSM':               {bg:'#ecfeff',t:'#164e63'},
-  'SPM/PPM':           {bg:'#ede9fe',t:'#4c1d95'},
-  'GRC/IRM':           {bg:'#fce7f3',t:'#9d174d'},
-  'ESM':               {bg:'#f0fdf4',t:'#14532d'},
-  'HRSD':              {bg:'#ffedd5',t:'#9a3412'},
-  'Financial Services':{bg:'#fef3c7',t:'#78350f'},
-  'SecOps':            {bg:'#fee2e2',t:'#991b1b'},
-  'FSM':               {bg:'#e0f2fe',t:'#075985'},
-  'Platform':          {bg:'#f3f4f6',t:'#374151'},
-  'Telecom':           {bg:'#f5f3ff',t:'#4338ca'},
-  'Industry':          {bg:'#f1f5f9',t:'#334155'},
+// ── BENCHMARKS ──
+const BENCH = {"global":{"avg":2307,"median":1044,"p75":2555,"p90":6144,"total":869},"by_bucket":{"CMDB/CSDM":{"count":39,"total_dl":278470,"avg_dl":7140,"median_dl":5734,"p75_dl":10972,"period_dl":7071,"adobe_count":10},"SecOps":{"count":29,"total_dl":52624,"avg_dl":1815,"median_dl":825,"p75_dl":2709,"period_dl":0,"adobe_count":0},"CSM":{"count":64,"total_dl":109615,"avg_dl":1713,"median_dl":967,"p75_dl":1932,"period_dl":892,"adobe_count":2},"Now Assist/AI":{"count":100,"total_dl":166853,"avg_dl":1669,"median_dl":992,"p75_dl":2069,"period_dl":370,"adobe_count":1},"FSM":{"count":16,"total_dl":20517,"avg_dl":1282,"median_dl":1641,"p75_dl":1933,"period_dl":0,"adobe_count":0},"ESM":{"count":76,"total_dl":69431,"avg_dl":914,"median_dl":584,"p75_dl":1027,"period_dl":409,"adobe_count":1},"Industry":{"count":34,"total_dl":15501,"avg_dl":456,"median_dl":350,"p75_dl":545,"period_dl":0,"adobe_count":0},"Financial Services":{"count":80,"total_dl":41547,"avg_dl":519,"median_dl":294,"p75_dl":556,"period_dl":0,"adobe_count":0},"HRSD":{"count":24,"total_dl":66577,"avg_dl":2774,"median_dl":2037,"p75_dl":3654,"period_dl":541,"adobe_count":2},"Platform":{"count":248,"total_dl":505597,"avg_dl":2039,"median_dl":1344,"p75_dl":2863,"period_dl":4564,"adobe_count":8},"ITSM":{"count":57,"total_dl":337972,"avg_dl":5929,"median_dl":3591,"p75_dl":7759,"period_dl":7624,"adobe_count":14},"GRC/IRM":{"count":35,"total_dl":94034,"avg_dl":2687,"median_dl":2229,"p75_dl":3775,"period_dl":1545,"adobe_count":4},"Telecom":{"count":18,"total_dl":13592,"avg_dl":755,"median_dl":851,"p75_dl":1122,"period_dl":0,"adobe_count":0},"HAM/SAM":{"count":22,"total_dl":122593,"avg_dl":5572,"median_dl":4720,"p75_dl":8200,"period_dl":2420,"adobe_count":5},"SPM/PPM":{"count":27,"total_dl":109503,"avg_dl":4056,"median_dl":3514,"p75_dl":6295,"period_dl":1435,"adobe_count":3}},"by_type":{"Deployment Guide":{"avg":258,"count":4},"Process Guide":{"avg":3213,"count":113},"Product White Paper":{"avg":772,"count":73},"Recommended Implementation Sequence":{"avg":2794,"count":28},"Process Workshop Presentation":{"avg":3360,"count":202},"Product Workbook":{"avg":3177,"count":10},"Implementation Guide":{"avg":943,"count":67},"Starter Stories":{"avg":2063,"count":121},"Scoping Guide":{"avg":2865,"count":20},"Knowledge Transfer":{"avg":1376,"count":7},"Domain Overview Technology":{"avg":423,"count":11},"Product Architecture Blueprint":{"avg":492,"count":8},"Program Guide":{"avg":2001,"count":88},"Project Template":{"avg":2635,"count":77},"Implementation Insights":{"avg":300,"count":21},"Product Briefing":{"avg":676,"count":5},"Product and Process Overview":{"avg":2214,"count":6},"Domain Overview Industry":{"avg":355,"count":1},"Kickoff Presentation":{"avg":655,"count":1},"Product Integration Options Presentation":{"avg":741,"count":1},"Additional Resources":{"avg":199,"count":1}}};
+
+// ── BUCKET CONFIG ──
+const BUCKET_CFG = {
+  'ITSM':             {cls:'bc-ITSM', bar:'#3b82f6'},
+  'CMDB/CSDM':        {cls:'bc-CMDB', bar:'#22c55e'},
+  'Now Assist/AI':    {cls:'bc-AI',   bar:'#a855f7'},
+  'HAM/SAM':          {cls:'bc-HAM',  bar:'#eab308'},
+  'CSM':              {cls:'bc-CSM',  bar:'#06b6d4'},
+  'SPM/PPM':          {cls:'bc-SPM',  bar:'#8b5cf6'},
+  'GRC/IRM':          {cls:'bc-GRC',  bar:'#ec4899'},
+  'ESM':              {cls:'bc-ESM',  bar:'#10b981'},
+  'HRSD':             {cls:'bc-HRSD', bar:'#f97316'},
+  'Financial Services':{cls:'bc-Fin', bar:'#f59e0b'},
+  'SecOps':           {cls:'bc-SecOps',bar:'#ef4444'},
+  'FSM':              {cls:'bc-FSM',  bar:'#0ea5e9'},
+  'Platform':         {cls:'bc-Platform',bar:'#6b7280'},
+  'Telecom':          {cls:'bc-Telecom',bar:'#6366f1'},
+  'Industry':         {cls:'bc-Industry',bar:'#94a3b8'},
 };
-function bucketBadge(bucket) {
-  const c = BUCKET_COLORS[bucket] || {bg:'#f3f4f6',t:'#374151'};
-  return `<span class="ac-badge" style="background:${c.bg};color:${c.t};">${bucket}</span>`;
-}
 
-// ─── BROWSE ───
-function getFiltered() {
-  const q = (document.getElementById('browse-search').value || '').toLowerCase().trim();
-  const bucket = document.getElementById('filt-bucket').value;
-  const type = document.getElementById('filt-type').value;
-  const sort = document.getElementById('filt-sort').value;
-  const adobeOnly = document.getElementById('filt-adobe').checked;
+function bCls(bucket) { return (BUCKET_CFG[bucket]||{cls:'bc-Platform'}).cls; }
+function bBar(bucket) { return (BUCKET_CFG[bucket]||{bar:'#6b7280'}).bar; }
+function fmt(n) { return (n||0).toLocaleString(); }
+function fmtK(n) { return n>=1000 ? (n/1000).toFixed(1)+'K' : String(n); }
 
-  let result = ASSETS.filter(a => {
-    if (bucket && a.bucket !== bucket) return false;
-    if (type && a.asset_type !== type) return false;
-    if (adobeOnly && !a.in_adobe) return false;
-    if (q) {
-      const haystack = (a.name + ' ' + a.bucket + ' ' + a.asset_type + ' ' + (a.primary_suite||'')).toLowerCase();
-      if (!haystack.includes(q)) return false;
-    }
-    return true;
-  });
+// ── SIGNAL for an asset ──
+function getSignal(asset) {
+  const b = BENCH.by_bucket[asset.bucket];
+  const g = BENCH.global;
+  const vtd = asset.lifetime_dl > 0 ? asset.lifetime_views / asset.lifetime_dl : 0;
+  const typeAvg = (BENCH.by_type[asset.asset_type]||{avg:g.avg}).avg;
 
-  result.sort((a, b) => {
-    if (sort === 'lifetime_dl') return b.lifetime_dl - a.lifetime_dl;
-    if (sort === 'period_dl')   return b.period_dl - a.period_dl;
-    if (sort === 'name')        return a.name.localeCompare(b.name);
-    if (sort === 'vtd') {
-      const va = a.lifetime_dl > 0 ? a.lifetime_views / a.lifetime_dl : 0;
-      const vb = b.lifetime_dl > 0 ? b.lifetime_views / b.lifetime_dl : 0;
-      return vb - va;
-    }
-    return 0;
-  });
-  return result;
-}
-
-function fmt(n) { return n ? n.toLocaleString() : '—'; }
-
-function renderBrowse() {
-  const assets = getFiltered();
-  const grid = document.getElementById('browse-grid');
-  document.getElementById('browse-count').textContent = assets.length.toLocaleString() + ' assets';
-
-  if (!assets.length) {
-    grid.innerHTML = '<div class="no-results">No assets match your filters.</div>';
-    return;
+  if (vtd > 5 && asset.lifetime_dl < typeAvg) {
+    return {label:'High browse, low DL', cls:'signal-vtd', tip:'Many views but low downloads — consider improving the preview, description, or discoverability.'};
   }
+  if (asset.lifetime_dl >= b.p75_dl) {
+    return {label:'Top performer', cls:'signal-good', tip:'In the top 25% of its product area by lifetime downloads.'};
+  }
+  if (asset.lifetime_dl >= b.median_dl) {
+    return {label:'On track', cls:'signal-ok', tip:'Above median for its product area.'};
+  }
+  if (asset.lifetime_dl < b.median_dl * 0.3) {
+    return {label:'Needs attention', cls:'signal-low', tip:'Well below median for its product area — may need promotion, updating, or review.'};
+  }
+  return {label:'Below median', cls:'signal-low', tip:'Below median for its product area.'};
+}
 
-  // Render up to 200 cards for performance
-  const visible = assets.slice(0, 200);
-  const sort = document.getElementById('filt-sort').value;
-
-  grid.innerHTML = visible.map(a => {
-    const vtd = a.lifetime_dl > 0 ? (a.lifetime_views / a.lifetime_dl).toFixed(1) : '—';
-    const vtdPct = a.lifetime_dl > 0 ? Math.min(100, Math.round((a.lifetime_views / a.lifetime_dl) / 5 * 100)) : 0;
-    const dotColor = a.in_adobe ? 'var(--green)' : 'var(--border2)';
-    const dotTitle = a.in_adobe ? 'In Adobe Analytics export' : 'Not in Adobe period export';
-
-    let stat1, stat2;
-    if (sort === 'vtd') {
-      stat1 = `<div class="ac-stat"><div class="ac-stat-lbl">Lifetime views</div><div class="ac-stat-val">${fmt(a.lifetime_views)}</div><div class="ac-stat-sub">total views</div></div>`;
-      stat2 = `<div class="ac-stat"><div class="ac-stat-lbl">View/dl ratio</div><div class="ac-stat-val">${vtd}×</div><div class="ac-stat-sub">views per download</div></div>`;
-    } else if (sort === 'period_dl') {
-      stat1 = `<div class="ac-stat"><div class="ac-stat-lbl">Period downloads</div><div class="ac-stat-val">${fmt(a.period_dl)}</div><div class="ac-stat-sub">Oct–Mar 2026</div></div>`;
-      stat2 = `<div class="ac-stat"><div class="ac-stat-lbl">Lifetime downloads</div><div class="ac-stat-val">${fmt(a.lifetime_dl)}</div><div class="ac-stat-sub">all-time</div></div>`;
-    } else {
-      stat1 = `<div class="ac-stat"><div class="ac-stat-lbl">Lifetime downloads</div><div class="ac-stat-val">${fmt(a.lifetime_dl)}</div><div class="ac-stat-sub">all-time</div></div>`;
-      stat2 = `<div class="ac-stat"><div class="ac-stat-lbl">Period downloads</div><div class="ac-stat-val">${a.in_adobe ? fmt(a.period_dl) : '—'}</div><div class="ac-stat-sub">Oct–Mar 2026</div></div>`;
-    }
-
-    return `<div class="asset-card" onclick="selectAsset('${a.number}')">
-      <div class="adobe-dot" style="background:${dotColor};" title="${dotTitle}"></div>
-      <div class="ac-name">${a.name}</div>
-      <div class="ac-row">
-        ${bucketBadge(a.bucket)}
-        ${a.asset_type ? `<span style="font-size:10px;color:var(--text3);">${a.asset_type}</span>` : ''}
+// ── PRODUCT GRID ──
+function buildProductGrid() {
+  const buckets = Object.entries(BENCH.by_bucket).sort((a,b) => b[1].total_dl - a[1].total_dl);
+  const maxDl = buckets[0][1].total_dl;
+  document.getElementById('product-grid').innerHTML = buckets.map(([bucket, s]) => {
+    const pct = Math.round(s.total_dl / maxDl * 100);
+    const barColor = bBar(bucket);
+    return `<div class="product-tile" onclick="showProduct('${bucket}')">
+      <span class="pt-bucket ${bCls(bucket)}">${bucket}</span>
+      <div class="pt-total">${fmt(s.total_dl)}</div>
+      <div class="pt-label">lifetime downloads</div>
+      <div class="pt-bar"><div class="pt-bar-fill" style="width:${pct}%;background:${barColor};"></div></div>
+      <div class="pt-meta">
+        <span>${s.count} assets</span>
+        <span>avg ${fmtK(s.avg_dl)}/asset</span>
       </div>
-      <div class="ac-stats">${stat1}${stat2}</div>
-      ${sort !== 'vtd' && a.lifetime_dl > 0 ? `<div class="vtd-bar"><div class="vtd-fill" style="width:${vtdPct}%"></div></div><div class="vtd-lbl">${vtd}× view/dl ratio</div>` : ''}
     </div>`;
   }).join('');
+}
 
-  if (assets.length > 200) {
-    grid.innerHTML += `<div class="no-results" style="padding:20px;color:var(--text3);">Showing 200 of ${assets.length} — refine filters to see more</div>`;
+// ── SEARCH ──
+let searchTimeout;
+function onSearch(q) {
+  clearTimeout(searchTimeout);
+  searchTimeout = setTimeout(() => doSearch(q), 120);
+}
+
+function doSearch(q) {
+  const box = document.getElementById('search-results');
+  const trimmed = q.trim().toLowerCase();
+  if (!trimmed) { box.classList.remove('open'); return; }
+
+  const matches = ASSETS.filter(a => {
+    const hay = (a.name + ' ' + a.bucket + ' ' + a.asset_type + ' ' + (a.primary_suite||'')).toLowerCase();
+    return hay.includes(trimmed);
+  }).sort((a,b) => b.lifetime_dl - a.lifetime_dl).slice(0,12);
+
+  if (!matches.length) {
+    box.innerHTML = '<div class="sr-empty">No assets found</div>';
+  } else {
+    box.innerHTML = matches.map(a => `
+      <div class="sr-item" onclick="showAsset('${a.number}','home')">
+        <span class="sr-badge ${bCls(a.bucket)}">${a.bucket}</span>
+        <span class="sr-name">${a.name}</span>
+        <span class="sr-meta">${fmt(a.lifetime_dl)} dl${a.in_adobe ? ' · '+fmt(a.period_dl)+' period' : ''}</span>
+      </div>`).join('');
+  }
+  box.classList.add('open');
+}
+
+// Close search on outside click
+document.addEventListener('click', e => {
+  if (!document.getElementById('search-wrap').contains(e.target)) {
+    document.getElementById('search-results').classList.remove('open');
+  }
+});
+
+// ── PRODUCT VIEW ──
+let currentProduct = null;
+let productSortCol = 'lifetime_dl';
+let productSortDir = -1;
+
+function showProduct(bucket) {
+  currentProduct = bucket;
+  document.getElementById('view-home').style.display = 'none';
+  document.getElementById('view-asset').classList.remove('active');
+  document.getElementById('view-product').classList.add('active');
+  renderProduct(bucket);
+  window.scrollTo(0,0);
+}
+
+function renderProduct(bucket) {
+  const assets = ASSETS.filter(a => a.bucket === bucket);
+  const s = BENCH.by_bucket[bucket];
+  const barColor = bBar(bucket);
+
+  // Sort
+  assets.sort((a,b) => {
+    let av = a[productSortCol]||0, bv = b[productSortCol]||0;
+    if (productSortCol === 'vtd') {
+      av = a.lifetime_dl > 0 ? a.lifetime_views/a.lifetime_dl : 0;
+      bv = b.lifetime_dl > 0 ? b.lifetime_views/b.lifetime_dl : 0;
+    }
+    if (productSortCol === 'name') return a.name.localeCompare(b.name) * productSortDir;
+    return (bv - av) * productSortDir;
+  });
+
+  const maxDl = Math.max(...assets.map(a=>a.lifetime_dl), 1);
+  const sortArrow = productSortDir === -1 ? ' ↓' : ' ↑';
+
+  const rows = assets.map(a => {
+    const sig = getSignal(a);
+    const vtd = a.lifetime_dl > 0 ? (a.lifetime_views/a.lifetime_dl).toFixed(1) : '—';
+    const pct = Math.round(a.lifetime_dl/maxDl*100);
+    return `<tr onclick="showAsset('${a.number}','product:${bucket}')">
+      <td>
+        <div class="tbl-name">${a.name}</div>
+        <div class="tbl-type">${a.asset_type||''}</div>
+      </td>
+      <td>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <div style="flex:1;">
+            <div style="font-weight:600;color:var(--text);font-size:13px;">${fmt(a.lifetime_dl)}</div>
+            <div class="inline-bar" style="margin-top:3px;"><div class="inline-bar-fill" style="width:${pct}%;background:${barColor};"></div></div>
+          </div>
+        </div>
+      </td>
+      <td style="font-size:13px;">${a.in_adobe ? fmt(a.period_dl) : '<span style="color:var(--text3);">—</span>'}</td>
+      <td style="font-size:13px;font-family:\'IBM Plex Mono\',monospace;">${vtd}×</td>
+      <td><span class="signal ${sig.cls}" title="${sig.tip}">${sig.label}</span></td>
+    </tr>`;
+  }).join('');
+
+  // Attention list
+  const attention = assets.filter(a => {
+    const sig = getSignal(a);
+    return sig.cls === 'signal-low' || sig.cls === 'signal-vtd';
+  });
+  const attentionHtml = attention.length ? `
+    <div class="note note-amber" style="margin-bottom:16px;">
+      ⚠ <strong>${attention.length} asset${attention.length>1?'s':''} need attention:</strong>
+      ${attention.map(a => `<em>${a.name}</em>`).join(', ')}
+    </div>` : '';
+
+  document.getElementById('product-content').innerHTML = `
+    <div class="product-header">
+      <div class="ph-top">
+        <div>
+          <span class="pt-bucket ${bCls(bucket)}" style="font-size:12px;padding:3px 10px;">${bucket}</span>
+          <div class="ph-title" style="margin-top:8px;">${bucket} — Content Performance</div>
+          <div class="ph-sub">${s.count} assets · Now Create BPL</div>
+        </div>
+      </div>
+      <div class="ph-stats">
+        <div class="ph-stat">
+          <div class="ph-stat-lbl">Total Assets</div>
+          <div class="ph-stat-val">${s.count}</div>
+          <div class="ph-stat-sub">in this area</div>
+        </div>
+        <div class="ph-stat">
+          <div class="ph-stat-lbl">Lifetime Downloads</div>
+          <div class="ph-stat-val">${fmtK(s.total_dl)}</div>
+          <div class="ph-stat-sub">all-time total</div>
+        </div>
+        <div class="ph-stat">
+          <div class="ph-stat-lbl">Avg per Asset</div>
+          <div class="ph-stat-val">${fmtK(s.avg_dl)}</div>
+          <div class="ph-stat-sub">vs global avg ${fmtK(BENCH.global.avg)}</div>
+        </div>
+        <div class="ph-stat">
+          <div class="ph-stat-lbl">Period Downloads</div>
+          <div class="ph-stat-val">${fmtK(s.period_dl)}</div>
+          <div class="ph-stat-sub">Oct–Mar · ${s.adobe_count} assets tracked</div>
+        </div>
+      </div>
+    </div>
+
+    ${attentionHtml}
+
+    <div class="asset-table-wrap">
+      <div class="at-toolbar">
+        <div class="at-title">${assets.length} assets — click any row for full details</div>
+        <div style="display:flex;gap:6px;">
+          ${[['lifetime_dl','Lifetime DL'],['period_dl','Period DL'],['vtd','View/DL'],['name','Name']].map(([col,lbl]) =>
+            `<button class="at-sort${productSortCol===col?' on':''}" onclick="setSortProduct('${col}')">${lbl}${productSortCol===col?sortArrow:''}</button>`
+          ).join('')}
+        </div>
+      </div>
+      <table class="asset-tbl">
+        <thead>
+          <tr>
+            <th onclick="setSortProduct('name')">Asset${productSortCol==='name'?sortArrow:''}</th>
+            <th onclick="setSortProduct('lifetime_dl')">Lifetime DL${productSortCol==='lifetime_dl'?sortArrow:''}</th>
+            <th onclick="setSortProduct('period_dl')">Period DL${productSortCol==='period_dl'?sortArrow:''}</th>
+            <th onclick="setSortProduct('vtd')">View/DL${productSortCol==='vtd'?sortArrow:''}</th>
+            <th>Signal</th>
+          </tr>
+        </thead>
+        <tbody>${rows}</tbody>
+      </table>
+    </div>`;
+}
+
+function setSortProduct(col) {
+  if (productSortCol === col) productSortDir *= -1;
+  else { productSortCol = col; productSortDir = col==='name' ? 1 : -1; }
+  renderProduct(currentProduct);
+}
+
+// ── ASSET DETAIL ──
+let assetBackTarget = 'home';
+
+function showAsset(number, backTarget) {
+  assetBackTarget = backTarget || 'home';
+  const asset = ASSETS.find(a => a.number === number);
+  if (!asset) return;
+
+  document.getElementById('view-home').style.display = 'none';
+  document.getElementById('view-product').classList.remove('active');
+  document.getElementById('view-asset').classList.add('active');
+
+  const backLabel = assetBackTarget === 'home' ? 'All product areas' : `← ${asset.bucket}`;
+  document.getElementById('asset-back-btn').textContent = `← ${assetBackTarget.startsWith('product:') ? asset.bucket : 'All product areas'}`;
+
+  renderAsset(asset);
+  window.scrollTo(0,0);
+}
+
+function backFromAsset() {
+  if (assetBackTarget.startsWith('product:')) {
+    const bucket = assetBackTarget.replace('product:','');
+    showProduct(bucket);
+  } else {
+    showHome();
   }
 }
 
-function filterBucket(b) {
-  switchTab('browse');
-  document.getElementById('filt-bucket').value = b;
-  renderBrowse();
+function renderAsset(asset) {
+  const sig = getSignal(asset);
+  const b = BENCH.by_bucket[asset.bucket];
+  const typeB = BENCH.by_type[asset.asset_type] || {avg: BENCH.global.avg, count: 0};
+  const vtd = asset.lifetime_dl > 0 ? (asset.lifetime_views / asset.lifetime_dl).toFixed(1) : '—';
+  const barColor = bBar(asset.bucket);
+
+  // Percentile within bucket
+  const bucketAssets = ASSETS.filter(a => a.bucket === asset.bucket).sort((a,b) => a.lifetime_dl - b.lifetime_dl);
+  const rank = bucketAssets.findIndex(a => a.number === asset.number) + 1;
+  const percentile = Math.round((rank / bucketAssets.length) * 100);
+  const rankFromTop = bucketAssets.length - rank + 1;
+
+  // Benchmark bar data
+  const benchPoints = [
+    {label:'This asset', val:asset.lifetime_dl, isYou:true},
+    {label:'Area avg',   val:b.avg_dl,           isYou:false},
+    {label:'Area p75',   val:b.p75_dl,           isYou:false},
+    {label:'Global avg', val:BENCH.global.avg,   isYou:false},
+    {label:'Type avg',   val:typeB.avg,           isYou:false},
+  ];
+  const maxBench = Math.max(...benchPoints.map(p=>p.val));
+  const benchHtml = benchPoints.map(p => `
+    <div class="bc-row">
+      <div class="bc-label${p.isYou?' bc-you':''}">${p.label}</div>
+      <div class="bc-track"><div class="bc-fill" style="width:${Math.round(p.val/maxBench*100)}%;background:${p.isYou?barColor:'var(--border2)'};${p.isYou?'':'opacity:.7;'}"></div></div>
+      <div class="bc-val${p.isYou?' bc-you':''}">${fmt(p.val)}</div>
+    </div>`).join('');
+
+  // Similar assets (same bucket, same type if possible, excluding self)
+  let similar = ASSETS.filter(a => a.number !== asset.number && a.bucket === asset.bucket && a.asset_type === asset.asset_type)
+    .sort((a,b) => b.lifetime_dl - a.lifetime_dl).slice(0,5);
+  if (similar.length < 3) {
+    similar = ASSETS.filter(a => a.number !== asset.number && a.bucket === asset.bucket)
+      .sort((a,b) => b.lifetime_dl - a.lifetime_dl).slice(0,5);
+  }
+  const maxSim = Math.max(asset.lifetime_dl, ...similar.map(a=>a.lifetime_dl), 1);
+
+  const similarRows = [asset, ...similar].sort((a,b) => b.lifetime_dl - a.lifetime_dl).map(a => {
+    const isThis = a.number === asset.number;
+    const pct = Math.round(a.lifetime_dl/maxSim*100);
+    return `<tr onclick="${isThis?'':``showAsset('${a.number}','product:${asset.bucket}')`}">
+      <td><div class="tbl-name" style="${isThis?'color:var(--accent);':''}">${a.name}${isThis?' <em style="font-weight:400;font-size:11px;color:var(--text3);">(this asset)</em>':''}</div><div class="tbl-type">${a.asset_type||''}</div></td>
+      <td><div style="font-weight:600;font-size:13px;">${fmt(a.lifetime_dl)}</div><div class="inline-bar" style="margin-top:3px;"><div class="inline-bar-fill" style="width:${pct}%;background:${isThis?barColor:'var(--border2)'};"></div></div></td>
+      <td style="font-size:13px;">${a.in_adobe ? fmt(a.period_dl) : '<span style="color:var(--text3);">—</span>'}</td>
+    </tr>`;
+  }).join('');
+
+  // Signal note
+  const signalNote = {
+    'signal-good': `<div class="note note-green">✓ <strong>Top performer.</strong> This asset is in the top 25% of ${asset.bucket} by lifetime downloads (#${rankFromTop} of ${b.count}). It's pulling its weight — maintain freshness and ensure it stays discoverable.</div>`,
+    'signal-ok':   `<div class="note note-blue">ℹ <strong>On track.</strong> Above median for ${asset.bucket}. Room to grow — check view-to-download ratio and whether the asset description is compelling enough to drive more downloads.</div>`,
+    'signal-low':  `<div class="note note-amber">⚠ <strong>Needs attention.</strong> Below median for ${asset.bucket} (avg: ${fmt(b.avg_dl)}). Consider whether the content is current, well-described, and promoted via success packs or recommendations.</div>`,
+    'signal-vtd':  `<div class="note note-amber">⚠ <strong>High browse, low download.</strong> ${vtd}× view-to-download ratio — people are finding and opening this asset but not downloading it. The preview, description, or format may need improvement.</div>`,
+  }[sig.cls] || '';
+
+  document.getElementById('asset-content').innerHTML = `
+    <div class="ad-header">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+        <span class="pt-bucket ${bCls(asset.bucket)}">${asset.bucket}</span>
+        ${asset.asset_type ? `<span style="font-size:11px;color:var(--text3);">${asset.asset_type}</span>` : ''}
+        <span class="signal ${sig.cls}" style="margin-left:auto;">${sig.label}</span>
+      </div>
+      <div class="ad-title">${asset.name}</div>
+      <div style="font-size:11px;color:var(--text3);font-family:'IBM Plex Mono',monospace;margin-top:4px;">${asset.number}${asset.primary_suite ? ' · '+asset.primary_suite : ''}</div>
+
+      <div class="ad-stats" style="margin-top:16px;">
+        <div class="ad-stat">
+          <div class="ad-stat-lbl">Lifetime Downloads</div>
+          <div class="ad-stat-val">${fmt(asset.lifetime_dl)}</div>
+          <div class="ad-stat-sub">#${rankFromTop} of ${b.count} in ${asset.bucket}</div>
+        </div>
+        <div class="ad-stat">
+          <div class="ad-stat-lbl">Lifetime Views</div>
+          <div class="ad-stat-val">${fmt(asset.lifetime_views)}</div>
+          <div class="ad-stat-sub">${vtd}× view/download ratio</div>
+        </div>
+        <div class="ad-stat">
+          <div class="ad-stat-lbl">Period Downloads</div>
+          <div class="ad-stat-val">${asset.in_adobe ? fmt(asset.period_dl) : '—'}</div>
+          <div class="ad-stat-sub">${asset.in_adobe ? 'Oct–Mar 2026 · Adobe tracked' : 'Not in Adobe top-53 export'}</div>
+        </div>
+        <div class="ad-stat">
+          <div class="ad-stat-lbl">Area Rank (Percentile)</div>
+          <div class="ad-stat-val">${100-percentile}th</div>
+          <div class="ad-stat-sub">top ${100-percentile}% of ${asset.bucket}</div>
+        </div>
+      </div>
+
+      ${signalNote}
+    </div>
+
+    <div class="benchmark-row">
+      <div class="benchmark-card">
+        <div class="bc-title">Benchmark — Lifetime Downloads</div>
+        ${benchHtml}
+      </div>
+      <div class="benchmark-card">
+        <div class="bc-title">Similar Assets in ${asset.bucket}</div>
+        <table class="asset-tbl">
+          <thead><tr><th>Asset</th><th>Lifetime DL</th><th>Period DL</th></tr></thead>
+          <tbody>${similarRows}</tbody>
+        </table>
+      </div>
+    </div>`;
 }
 
-function selectAsset(number) {
-  const a = ASSETS.find(x => x.number === number);
-  if (!a) return;
-  switchTab('chat');
-  quickQuery(`Tell me about ${a.name}. It's ${a.asset_type} in ${a.bucket} (${a.primary_suite || 'no product suite'}). Lifetime downloads: ${a.lifetime_dl.toLocaleString()}, lifetime views: ${a.lifetime_views.toLocaleString()}${a.in_adobe ? ', period downloads (Oct–Mar): ' + a.period_dl.toLocaleString() : ''}. What do these numbers tell us and how does it compare to similar assets?`);
+function showHome() {
+  document.getElementById('view-home').style.display = 'block';
+  document.getElementById('view-product').classList.remove('active');
+  document.getElementById('view-asset').classList.remove('active');
+  window.scrollTo(0,0);
 }
 
-// ─── CHAT ───
-const msgEl = document.getElementById('messages');
-const inEl = document.getElementById('input');
-let started = false;
-function quickQuery(q) { inEl.value=q; sendMessage(); }
-function goChat(q) { switchTab('chat'); quickQuery(q); }
-
-function buildPrompt(question) {
-  // Bucket summary
-  const bucketSummary = {};
-  ASSETS.forEach(a => {
-    if (!bucketSummary[a.bucket]) bucketSummary[a.bucket] = {count:0,ldl:0,pdl:0};
-    bucketSummary[a.bucket].count++;
-    bucketSummary[a.bucket].ldl += a.lifetime_dl;
-    bucketSummary[a.bucket].pdl += a.period_dl;
-  });
-  const bucketLines = Object.entries(bucketSummary)
-    .sort((a,b) => b[1].ldl - a[1].ldl)
-    .map(([b,d]) => `${b}: ${d.count} assets, ${d.ldl.toLocaleString()} lifetime dl, ${d.pdl.toLocaleString()} period dl`)
-    .join('\n');
-
-  // Full asset list as compact CSV
-  const csvHeader = 'name,bucket,asset_type,lifetime_dl,lifetime_views,period_dl,in_adobe';
-  const csvRows = ASSETS.map(a =>
-    `"${a.name}",${a.bucket},"${a.asset_type||''}",${a.lifetime_dl},${a.lifetime_views},${a.period_dl},${a.in_adobe}`
-  ).join('\n');
-
-  return `You are an analytics assistant for the ServiceNow Best Practices Library (BPL). I have the complete Now Create asset catalog — 869 assets with download data.
-
-DATASET CONTEXT:
-- Period: Oct 1, 2025 – Mar 20, 2026 (Adobe Analytics)
-- Lifetime data: all-time snapshot from Now Create, Mar 18 2026
-- Only 53 assets appear in the Adobe period export (top performers). period_dl=0 + in_adobe=false means not tracked, NOT zero downloads.
-- View-to-download ratio = lifetime_views ÷ lifetime_dl. High ratio = people browse but don't download.
-
-PRODUCT BUCKET SUMMARY:
-${bucketLines}
-
-FULL ASSET DATA (CSV):
-${csvHeader}
-${csvRows}
-
-MY QUESTION:
-${question}
-
-Please answer with specific numbers from the data. Use tables for ranked lists.`;
-}
-
-function showStatus(msg, isError) {
-  const el = document.getElementById('copy-status');
-  el.textContent = msg;
-  el.style.display = 'block';
-  el.style.background = isError ? 'var(--tr-bg)' : 'var(--tg-bg)';
-  el.style.borderColor = isError ? '#fca5a5' : '#b6dfc8';
-  el.style.color = isError ? 'var(--tr-t)' : 'var(--tg-t)';
-  setTimeout(() => { el.style.display = 'none'; }, 4000);
-}
-
-function sendMessage() {
-  const q = inEl.value.trim();
-  if (!q) return;
-  hideWelcome();
-
-  const prompt = buildPrompt(q);
-
-  // Show the question in the chat as a record
-  addMsg(q, 'user');
-
-  // Copy to clipboard
-  navigator.clipboard.writeText(prompt).then(() => {
-    inEl.value = ''; autoResize(inEl);
-    showStatus('✓ Prompt copied to clipboard — opening Claude.ai. Paste your prompt there to get your answer.');
-    addMsg('Your prompt has been copied to clipboard with the full 869-asset dataset included. Claude.ai is opening in a new tab — paste and hit enter.', 'bot');
-    setTimeout(() => window.open('https://claude.ai/new', '_blank'), 300);
-  }).catch(() => {
-    // Clipboard failed — show prompt in a textarea for manual copy
-    showStatus('⚠ Auto-copy failed — please copy the prompt below manually.', true);
-    const ta = document.createElement('textarea');
-    ta.value = prompt;
-    ta.style.cssText = 'width:100%;height:120px;font-size:11px;font-family:monospace;margin-top:8px;border:1px solid var(--border2);border-radius:6px;padding:8px;resize:vertical;';
-    ta.readOnly = true;
-    const wrapper = document.createElement('div');
-    wrapper.appendChild(ta);
-    addMsg('Copy the prompt below, then open <a href="https://claude.ai/new" target="_blank" style="color:var(--accent)">Claude.ai</a> and paste it:', 'bot');
-    const lastMsg = msgEl.lastElementChild.querySelector('.bubble');
-    if (lastMsg) lastMsg.appendChild(wrapper);
-    ta.select();
-  });
-}
-
-// ─── TABS ───
-function switchTab(tab) {
-  document.getElementById('panel-browse').style.display = tab==='browse'?'flex':'none';
-  document.getElementById('panel-chat').style.display   = tab==='chat'  ?'flex':'none';
-  document.getElementById('tab-browse').className = 'tab-btn'+(tab==='browse'?' active':'');
-  document.getElementById('tab-chat').className   = 'tab-btn'+(tab==='chat'?' active':'');
-}
-
-function handleKey(e) { if (e.key==='Enter'&&!e.shiftKey) { e.preventDefault(); sendMessage(); } }
-function autoResize(el) { el.style.height='auto'; el.style.height=Math.min(el.scrollHeight,120)+'px'; }
-
-// ─── INIT ───
-renderBrowse();
-
-// ─── INIT ───
-renderBrowse();
+// ── INIT ──
+buildProductGrid();
 </script>
-
-
 </body>
 </html>
