@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -22,6 +23,7 @@
     --bar-green: #1a9e5f;
     --bar-blue: #2e6fda;
     --bar-amber: #d97706;
+    --bar-red: #dc2626;
     --tag-green-bg: #e8f5ee;
     --tag-green-t: #0e7c4a;
     --tag-blue-bg: #e8f0fd;
@@ -30,6 +32,8 @@
     --tag-amber-t: #92400e;
     --tag-red-bg: #fee2e2;
     --tag-red-t: #991b1b;
+    --tag-purple-bg: #f3e8ff;
+    --tag-purple-t: #6b21a8;
     --shadow: 0 1px 3px rgba(0,0,0,.08), 0 1px 2px rgba(0,0,0,.04);
   }
 
@@ -48,6 +52,13 @@
   .badge-live { display:flex; align-items:center; gap:5px; background:var(--surface); border:1px solid var(--border2); padding:4px 10px; border-radius:20px; font-size:11px; color:var(--text2); font-family:'IBM Plex Mono',monospace; }
   .live-dot { width:6px; height:6px; border-radius:50%; background:#1a9e5f; animation:pulse 2s infinite; }
   @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+
+  /* TAB NAV */
+  .tab-nav { display:flex; align-items:center; gap:2px; padding:0 24px; background:var(--surface); border-bottom:1px solid var(--border); flex-shrink:0; }
+  .tab-btn { padding:10px 16px; font-size:13px; font-weight:500; color:var(--text3); border:none; background:transparent; cursor:pointer; border-bottom:2px solid transparent; transition:all .15s; font-family:'Inter',sans-serif; display:flex; align-items:center; gap:6px; }
+  .tab-btn:hover { color:var(--text2); }
+  .tab-btn.active { color:var(--accent); border-bottom-color:var(--accent); }
+  .tab-icon { font-size:13px; }
 
   /* LAYOUT */
   .main { display:flex; flex:1; overflow:hidden; }
@@ -99,17 +110,22 @@
   .bar-track { flex:1; height:7px; background:var(--surface2); border-radius:4px; overflow:hidden; border:1px solid var(--border); }
   .bar-fill { height:100%; background:var(--bar-green); border-radius:3px; width:0; transition:width .75s cubic-bezier(.16,1,.3,1); }
   .bar-fill.blue { background:var(--bar-blue); }
+  .bar-fill.amber { background:var(--bar-amber); }
+  .bar-fill.red { background:var(--bar-red); }
   .bar-count { width:38px; text-align:right; color:var(--text); font-family:'IBM Plex Mono',monospace; font-size:12px; font-weight:500; flex-shrink:0; }
 
   .tag { display:inline-block; padding:2px 8px; border-radius:4px; font-size:11px; font-weight:500; margin:0 2px; }
   .tag-green { background:var(--tag-green-bg); color:var(--tag-green-t); }
   .tag-blue { background:var(--tag-blue-bg); color:var(--tag-blue-t); }
   .tag-amber { background:var(--tag-amber-bg); color:var(--tag-amber-t); }
+  .tag-red { background:var(--tag-red-bg); color:var(--tag-red-t); }
+  .tag-purple { background:var(--tag-purple-bg); color:var(--tag-purple-t); }
 
   .info-note { display:flex; gap:8px; padding:10px 12px; border-radius:7px; font-size:12px; line-height:1.55; margin-top:10px; }
   .info-note.green { background:var(--tag-green-bg); border:1px solid #b6dfc8; color:var(--tag-green-t); }
   .info-note.amber { background:var(--tag-amber-bg); border:1px solid #fcd34d; color:var(--tag-amber-t); }
   .info-note.blue { background:var(--tag-blue-bg); border:1px solid #bfdbfe; color:var(--tag-blue-t); }
+  .info-note.red { background:var(--tag-red-bg); border:1px solid #fca5a5; color:var(--tag-red-t); }
 
   .ti { display:flex; align-items:center; gap:10px; padding:8px 0; border-bottom:1px solid var(--border); font-size:13px; }
   .ti-name { flex:1; color:var(--text2); }
@@ -150,6 +166,117 @@
   .welcome-chips { display:flex; flex-wrap:wrap; gap:8px; justify-content:center; margin-top:18px; max-width:560px; }
   .chip { padding:8px 14px; background:var(--surface); border:1.5px solid var(--border2); border-radius:20px; font-size:12px; font-weight:500; color:var(--text2); cursor:pointer; transition:all .14s; }
   .chip:hover { background:var(--accent-light); border-color:#b6dfc8; color:var(--accent); }
+
+  /* ── FEEDBACK PANEL ── */
+  .feedback-panel { flex:1; display:flex; overflow:hidden; }
+  .feedback-panel.hidden { display:none; }
+  .chat-area.hidden { display:none; }
+
+  /* Feedback sidebar (reuse sidebar styles, different content) */
+  .fb-sidebar { width:236px; border-right:1px solid var(--border); background:var(--surface); flex-shrink:0; overflow-y:auto; padding:14px 16px; display:flex; flex-direction:column; gap:14px; }
+  .fb-sidebar::-webkit-scrollbar { width:3px; }
+  .fb-sidebar::-webkit-scrollbar-thumb { background:var(--border2); border-radius:2px; }
+
+  .fb-stat { padding:10px 12px; background:var(--bg); border:1px solid var(--border); border-radius:8px; }
+  .fb-stat-label { font-size:10px; color:var(--text3); text-transform:uppercase; letter-spacing:.06em; margin-bottom:4px; font-weight:500; }
+  .fb-stat-value { font-size:20px; font-weight:600; color:var(--text); line-height:1.1; }
+  .fb-stat-sub { font-size:11px; color:var(--text2); margin-top:3px; }
+
+  .helpful-ring { display:flex; align-items:center; gap:10px; padding:10px 12px; background:var(--bg); border:1px solid var(--border); border-radius:8px; }
+  .ring-wrap { position:relative; width:52px; height:52px; flex-shrink:0; }
+  .ring-wrap svg { transform:rotate(-90deg); }
+  .ring-pct { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:600; color:var(--text); }
+  .ring-info { flex:1; }
+  .ring-label { font-size:10px; color:var(--text3); text-transform:uppercase; letter-spacing:.06em; font-weight:500; margin-bottom:3px; }
+  .ring-detail { font-size:11px; color:var(--text2); line-height:1.4; }
+
+  /* Mini bar for issue dist in sidebar */
+  .mini-bar-row { display:flex; align-items:center; gap:6px; margin-bottom:5px; }
+  .mini-bar-label { font-size:11px; color:var(--text2); width:110px; flex-shrink:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .mini-bar-track { flex:1; height:5px; background:var(--surface2); border-radius:3px; overflow:hidden; border:1px solid var(--border); }
+  .mini-bar-fill { height:100%; border-radius:2px; width:0; transition:width .6s cubic-bezier(.16,1,.3,1); }
+  .mini-bar-count { font-size:10px; font-family:'IBM Plex Mono',monospace; color:var(--text3); width:18px; text-align:right; flex-shrink:0; }
+
+  /* Feedback filter controls */
+  .fb-filters { display:flex; align-items:center; gap:6px; padding:10px 20px; background:var(--surface); border-bottom:1px solid var(--border); flex-shrink:0; flex-wrap:wrap; }
+  .fb-filter-label { font-size:10px; font-weight:600; color:var(--text3); text-transform:uppercase; letter-spacing:.08em; font-family:'IBM Plex Mono',monospace; margin-right:2px; }
+  .filt-btn { padding:4px 10px; border-radius:20px; font-size:11px; font-weight:500; border:1px solid var(--border2); background:var(--surface); color:var(--text2); cursor:pointer; font-family:'Inter',sans-serif; transition:all .13s; }
+  .filt-btn:hover { border-color:#b6dfc8; color:var(--accent); background:var(--accent-light); }
+  .filt-btn.on { background:var(--accent-light); border-color:#b6dfc8; color:var(--accent); }
+  .filt-btn.on-red { background:var(--tag-red-bg); border-color:#fca5a5; color:var(--tag-red-t); }
+  .fb-search { margin-left:auto; padding:5px 11px; background:var(--bg); border:1.5px solid var(--border2); border-radius:8px; font-size:12px; font-family:'Inter',sans-serif; color:var(--text); outline:none; width:180px; transition:border-color .13s; }
+  .fb-search:focus { border-color:var(--accent-mid); }
+  .fb-search::placeholder { color:var(--text3); }
+
+  /* Main feedback table area */
+  .fb-main { flex:1; overflow-y:auto; padding:0; }
+  .fb-main::-webkit-scrollbar { width:4px; }
+  .fb-main::-webkit-scrollbar-thumb { background:var(--border2); border-radius:2px; }
+
+  /* Attention banner */
+  .attention-banner { margin:16px 20px 0; padding:12px 14px; background:var(--tag-red-bg); border:1px solid #fca5a5; border-radius:8px; }
+  .attention-title { font-size:11px; font-weight:600; color:var(--tag-red-t); text-transform:uppercase; letter-spacing:.07em; font-family:'IBM Plex Mono',monospace; margin-bottom:8px; display:flex; align-items:center; gap:6px; }
+  .attention-item { display:flex; align-items:center; gap:8px; padding:5px 0; border-bottom:1px solid rgba(220,38,38,.15); font-size:12px; }
+  .attention-item:last-child { border-bottom:none; }
+  .att-name { flex:1; color:var(--tag-red-t); font-weight:500; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .att-type { font-size:10px; color:var(--tag-red-t); opacity:.7; background:rgba(220,38,38,.1); padding:1px 6px; border-radius:3px; flex-shrink:0; }
+  .att-pct { font-family:'IBM Plex Mono',monospace; font-size:11px; font-weight:600; color:var(--tag-red-t); flex-shrink:0; }
+
+  /* Asset table */
+  .fb-table-wrap { padding:16px 20px; }
+  .fb-section-label { font-size:11px; font-weight:600; color:var(--text3); text-transform:uppercase; letter-spacing:.08em; font-family:'IBM Plex Mono',monospace; margin-bottom:10px; display:flex; align-items:center; gap:8px; }
+  .fb-section-label::after { content:''; flex:1; height:1px; background:var(--border); }
+  .fb-sort-row { display:flex; align-items:center; gap:6px; margin-bottom:10px; }
+  .sort-lbl { font-size:10px; color:var(--text3); font-family:'IBM Plex Mono',monospace; }
+  .sort-btn { padding:3px 9px; border-radius:4px; font-size:11px; border:1px solid var(--border2); background:var(--surface); color:var(--text2); cursor:pointer; font-family:'Inter',sans-serif; transition:all .12s; }
+  .sort-btn.on { background:var(--accent-light); border-color:#b6dfc8; color:var(--accent); }
+
+  /* Asset cards */
+  .asset-card { background:var(--surface); border:1px solid var(--border); border-radius:8px; margin-bottom:8px; overflow:hidden; transition:box-shadow .13s; cursor:pointer; }
+  .asset-card:hover { box-shadow:0 2px 8px rgba(0,0,0,.08); }
+  .asset-card.expanded { box-shadow:0 2px 12px rgba(0,0,0,.1); }
+  .asset-card-header { display:flex; align-items:center; gap:10px; padding:10px 14px; }
+  .ac-score { width:36px; height:36px; border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; flex-shrink:0; font-family:'IBM Plex Mono',monospace; }
+  .ac-score.green { background:var(--tag-green-bg); color:var(--tag-green-t); }
+  .ac-score.amber { background:var(--tag-amber-bg); color:var(--tag-amber-t); }
+  .ac-score.red { background:var(--tag-red-bg); color:var(--tag-red-t); }
+  .ac-info { flex:1; min-width:0; }
+  .ac-name { font-size:13px; font-weight:600; color:var(--text); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .ac-meta { display:flex; align-items:center; gap:6px; margin-top:3px; }
+  .ac-type { font-size:10px; color:var(--text3); font-family:'IBM Plex Mono',monospace; }
+  .ac-total { font-size:11px; color:var(--text2); }
+  .ac-issues { display:flex; gap:4px; flex-wrap:wrap; }
+  .ac-right { display:flex; align-items:center; gap:10px; flex-shrink:0; }
+  .helpful-bar-wrap { display:flex; align-items:center; gap:6px; }
+  .helpful-bar { width:60px; height:6px; background:var(--surface2); border-radius:3px; overflow:hidden; border:1px solid var(--border); }
+  .helpful-bar-fill { height:100%; border-radius:2px; transition:width .5s; }
+  .helpful-bar-fill.green { background:var(--bar-green); }
+  .helpful-bar-fill.amber { background:var(--bar-amber); }
+  .helpful-bar-fill.red { background:var(--bar-red); }
+  .helpful-pct-label { font-size:11px; font-weight:600; font-family:'IBM Plex Mono',monospace; width:32px; text-align:right; }
+  .helpful-pct-label.green { color:var(--tag-green-t); }
+  .helpful-pct-label.amber { color:var(--tag-amber-t); }
+  .helpful-pct-label.red { color:var(--tag-red-t); }
+  .expand-chevron { font-size:11px; color:var(--text3); transition:transform .2s; }
+  .asset-card.expanded .expand-chevron { transform:rotate(180deg); }
+
+  /* Expanded detail */
+  .asset-detail { border-top:1px solid var(--border); padding:12px 14px; background:var(--bg); display:none; }
+  .asset-card.expanded .asset-detail { display:block; }
+  .detail-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+  .detail-col-label { font-size:10px; font-weight:600; color:var(--text3); text-transform:uppercase; letter-spacing:.07em; font-family:'IBM Plex Mono',monospace; margin-bottom:7px; }
+  .issue-pill { display:inline-flex; align-items:center; gap:4px; padding:3px 8px; border-radius:4px; font-size:11px; font-weight:500; margin:2px 2px 2px 0; }
+  .comment-block { padding:8px 10px; background:var(--surface); border:1px solid var(--border); border-left:3px solid var(--border2); border-radius:5px; font-size:12px; color:var(--text2); line-height:1.5; margin-bottom:5px; font-style:italic; }
+  .month-sparkline { display:flex; align-items:flex-end; gap:3px; height:28px; margin-top:6px; }
+  .spark-bar { flex:1; background:var(--accent); border-radius:2px 2px 0 0; opacity:.7; min-width:8px; }
+  .spark-label { font-size:9px; color:var(--text3); font-family:'IBM Plex Mono',monospace; text-align:center; margin-top:2px; }
+  .spark-wrap { display:flex; flex-direction:column; flex:1; align-items:center; }
+
+  /* Monthly chart in sidebar */
+  .monthly-chart { padding:4px 0; }
+
+  /* Empty state */
+  .fb-empty { padding:48px 24px; text-align:center; color:var(--text3); font-size:13px; }
 </style>
 </head>
 <body>
@@ -168,89 +295,411 @@
   </div>
 </header>
 
-<div class="main">
-  <div class="sidebar">
-    <div class="sb-section">
-      <div class="sb-label">This Period</div>
-      <div class="metric-card">
-        <div class="metric-label">Total Downloads</div>
-        <div class="metric-value">31,137</div>
-        <div class="metric-sub">Feb 17 – Mar 18, 2026</div>
-      </div>
-      <div class="metric-card">
-        <div class="metric-label">Top Asset</div>
-        <div class="metric-value" style="font-size:15px;line-height:1.3">CSDM Data Model Examples</div>
-        <div class="metric-sub"><span class="metric-highlight">445 downloads</span> · #1 overall</div>
-      </div>
-      <div class="metric-card">
-        <div class="metric-label">Success Pack Exports</div>
-        <div class="metric-value">4,823</div>
-        <div class="metric-sub">75% from Create Your Own App</div>
-      </div>
-    </div>
-
-    <div class="sb-section">
-      <div class="sb-label">By Product</div>
-      <button class="qq" onclick="quickQuery('Show me downloads by product area')"><span class="qi">◎ OVERVIEW</span>All product areas</button>
-      <button class="qq" onclick="quickQuery('How are ITSM downloads performing?')"><span class="qi">↓ ITSM</span>ITSM downloads</button>
-      <button class="qq" onclick="quickQuery('How are CSDM and CMDB downloads performing?')"><span class="qi">↓ CSDM/CMDB</span>CSDM/CMDB downloads</button>
-      <button class="qq" onclick="quickQuery('How are SPM and PPM downloads performing?')"><span class="qi">↓ SPM/PPM</span>SPM/PPM downloads</button>
-      <button class="qq" onclick="quickQuery('How are HRSD downloads performing?')"><span class="qi">↓ HRSD</span>HRSD downloads</button>
-      <button class="qq" onclick="quickQuery('How are GRC downloads performing?')"><span class="qi">↓ GRC/IRM</span>GRC/IRM downloads</button>
-      <button class="qq" onclick="quickQuery('How is Now Assist performing?')"><span class="qi">↓ NOW ASSIST</span>Now Assist/AI downloads</button>
-    </div>
-
-    <div class="sb-section">
-      <div class="sb-label">Quick Queries</div>
-      <button class="qq" onclick="quickQuery('What are the top downloaded assets?')"><span class="qi">↓ ALL ASSETS</span>Top downloaded assets</button>
-      <button class="qq" onclick="quickQuery('Which assets have low downloads?')"><span class="qi">↘ LOW PERFORMERS</span>Low-performing assets</button>
-      <button class="qq" onclick="quickQuery('What are the top success pack exports?')"><span class="qi">↗ EXPORTS</span>Success pack exports</button>
-      <button class="qq" onclick="quickQuery('What are the top recommended assets?')"><span class="qi">★ RECS</span>Recommendation clicks</button>
-    </div>
-  </div>
-
-  <div class="chat-area">
-    <div class="messages" id="messages">
-      <div class="welcome" id="welcome">
-        <div class="welcome-icon">B</div>
-        <h2>Ask about your content</h2>
-        <p>Real Adobe Analytics data for the Best Practices Library. Ask by product area, asset name, or metric.</p>
-        <div class="welcome-chips">
-          <div class="chip" onclick="quickQuery('Show me downloads by product area')">Downloads by product</div>
-          <div class="chip" onclick="quickQuery('How are ITSM downloads performing?')">ITSM downloads</div>
-          <div class="chip" onclick="quickQuery('How are CSDM and CMDB downloads performing?')">CSDM/CMDB downloads</div>
-          <div class="chip" onclick="quickQuery('What are the top downloaded assets?')">Top downloads overall</div>
-          <div class="chip" onclick="quickQuery('Which assets have low downloads?')">Low-performing assets</div>
-          <div class="chip" onclick="quickQuery('How are HRSD downloads performing?')">HRSD downloads</div>
-          <div class="chip" onclick="quickQuery('How is Now Assist performing?')">Now Assist/AI</div>
-          <div class="chip" onclick="quickQuery('What are the top success pack exports?')">Success pack exports</div>
-          <div class="chip" onclick="quickQuery('How are HAM and SAM downloads performing?')">HAM/SAM downloads</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="input-area">
-      <div class="input-row">
-        <div class="input-wrap">
-          <textarea id="input" placeholder="Ask about downloads for any product area or asset..." rows="1"
-            onkeydown="handleKey(event)" oninput="autoResize(this)"></textarea>
-        </div>
-        <button class="send-btn" onclick="sendMessage()">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <line x1="22" y1="2" x2="11" y2="13"></line>
-            <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
-          </svg>
-        </button>
-      </div>
-      <div class="input-hint">Report suite: OneCX (mynow.servicenow.com) · Real data · Feb 17 – Mar 18, 2026</div>
-    </div>
-  </div>
+<!-- TAB NAV -->
+<div class="tab-nav">
+  <button class="tab-btn active" id="tab-analytics" onclick="switchTab('analytics')">
+    <span class="tab-icon">📊</span> Analytics
+  </button>
+  <button class="tab-btn" id="tab-feedback" onclick="switchTab('feedback')">
+    <span class="tab-icon">💬</span> Feedback
+    <span id="feedback-badge" style="background:var(--tag-amber-bg);color:var(--tag-amber-t);border:1px solid #fcd34d;padding:1px 6px;border-radius:10px;font-size:10px;font-weight:600;font-family:'IBM Plex Mono',monospace;">242</span>
+  </button>
 </div>
 
+<div class="main">
+
+  <!-- ══════════════════════════════════════════════
+       ANALYTICS PANEL (original)
+  ══════════════════════════════════════════════ -->
+  <div id="panel-analytics" style="display:flex;flex:1;overflow:hidden;">
+    <div class="sidebar">
+      <div class="sb-section">
+        <div class="sb-label">This Period</div>
+        <div class="metric-card">
+          <div class="metric-label">Total Downloads</div>
+          <div class="metric-value">31,137</div>
+          <div class="metric-sub">Feb 17 – Mar 18, 2026</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-label">Top Asset</div>
+          <div class="metric-value" style="font-size:15px;line-height:1.3">CSDM Data Model Examples</div>
+          <div class="metric-sub"><span class="metric-highlight">445 downloads</span> · #1 overall</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-label">Success Pack Exports</div>
+          <div class="metric-value">4,823</div>
+          <div class="metric-sub">75% from Create Your Own App</div>
+        </div>
+      </div>
+      <div class="sb-section">
+        <div class="sb-label">By Product</div>
+        <button class="qq" onclick="quickQuery('Show me downloads by product area')"><span class="qi">◎ OVERVIEW</span>All product areas</button>
+        <button class="qq" onclick="quickQuery('How are ITSM downloads performing?')"><span class="qi">↓ ITSM</span>ITSM downloads</button>
+        <button class="qq" onclick="quickQuery('How are CSDM and CMDB downloads performing?')"><span class="qi">↓ CSDM/CMDB</span>CSDM/CMDB downloads</button>
+        <button class="qq" onclick="quickQuery('How are SPM and PPM downloads performing?')"><span class="qi">↓ SPM/PPM</span>SPM/PPM downloads</button>
+        <button class="qq" onclick="quickQuery('How are HRSD downloads performing?')"><span class="qi">↓ HRSD</span>HRSD downloads</button>
+        <button class="qq" onclick="quickQuery('How are GRC downloads performing?')"><span class="qi">↓ GRC/IRM</span>GRC/IRM downloads</button>
+        <button class="qq" onclick="quickQuery('How is Now Assist performing?')"><span class="qi">↓ NOW ASSIST</span>Now Assist/AI downloads</button>
+      </div>
+      <div class="sb-section">
+        <div class="sb-label">Quick Queries</div>
+        <button class="qq" onclick="quickQuery('What are the top downloaded assets?')"><span class="qi">↓ ALL ASSETS</span>Top downloaded assets</button>
+        <button class="qq" onclick="quickQuery('Which assets have low downloads?')"><span class="qi">↘ LOW PERFORMERS</span>Low-performing assets</button>
+        <button class="qq" onclick="quickQuery('What are the top success pack exports?')"><span class="qi">↗ EXPORTS</span>Success pack exports</button>
+        <button class="qq" onclick="quickQuery('What are the top recommended assets?')"><span class="qi">★ RECS</span>Recommendation clicks</button>
+      </div>
+    </div>
+
+    <div class="chat-area">
+      <div class="messages" id="messages">
+        <div class="welcome" id="welcome">
+          <div class="welcome-icon">B</div>
+          <h2>Ask about your content</h2>
+          <p>Real Adobe Analytics data for the Best Practices Library. Ask by product area, asset name, or metric.</p>
+          <div class="welcome-chips">
+            <div class="chip" onclick="quickQuery('Show me downloads by product area')">Downloads by product</div>
+            <div class="chip" onclick="quickQuery('How are ITSM downloads performing?')">ITSM downloads</div>
+            <div class="chip" onclick="quickQuery('How are CSDM and CMDB downloads performing?')">CSDM/CMDB downloads</div>
+            <div class="chip" onclick="quickQuery('What are the top downloaded assets?')">Top downloads overall</div>
+            <div class="chip" onclick="quickQuery('Which assets have low downloads?')">Low-performing assets</div>
+            <div class="chip" onclick="quickQuery('How are HRSD downloads performing?')">HRSD downloads</div>
+            <div class="chip" onclick="quickQuery('How is Now Assist performing?')">Now Assist/AI</div>
+            <div class="chip" onclick="quickQuery('What are the top success pack exports?')">Success pack exports</div>
+            <div class="chip" onclick="quickQuery('How are HAM and SAM downloads performing?')">HAM/SAM downloads</div>
+          </div>
+        </div>
+      </div>
+      <div class="input-area">
+        <div class="input-row">
+          <div class="input-wrap">
+            <textarea id="input" placeholder="Ask about downloads for any product area or asset..." rows="1"
+              onkeydown="handleKey(event)" oninput="autoResize(this)"></textarea>
+          </div>
+          <button class="send-btn" onclick="sendMessage()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="22" y1="2" x2="11" y2="13"></line>
+              <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+            </svg>
+          </button>
+        </div>
+        <div class="input-hint">Report suite: OneCX (mynow.servicenow.com) · Real data · Feb 17 – Mar 18, 2026</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════
+       FEEDBACK PANEL
+  ══════════════════════════════════════════════ -->
+  <div id="panel-feedback" style="display:none;flex:1;overflow:hidden;flex-direction:row;">
+
+    <!-- Feedback sidebar -->
+    <div class="fb-sidebar">
+      <div class="sb-label">Sep 2025 – Mar 2026</div>
+
+      <div class="helpful-ring">
+        <div class="ring-wrap">
+          <svg width="52" height="52" viewBox="0 0 52 52">
+            <circle cx="26" cy="26" r="20" fill="none" stroke="var(--border2)" stroke-width="5"/>
+            <circle cx="26" cy="26" r="20" fill="none" stroke="var(--bar-green)" stroke-width="5"
+              stroke-dasharray="125.7" stroke-dashoffset="44" stroke-linecap="round"/>
+          </svg>
+          <div class="ring-pct">65%</div>
+        </div>
+        <div class="ring-info">
+          <div class="ring-label">Helpful rate</div>
+          <div class="ring-detail">157 helpful · 85 not helpful<br>across 242 records</div>
+        </div>
+      </div>
+
+      <div>
+        <div class="fb-stat-label" style="font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;font-family:'IBM Plex Mono',monospace;margin-bottom:8px;">Feedback volume</div>
+        <div class="fb-stat">
+          <div class="fb-stat-label">Total responses</div>
+          <div class="fb-stat-value">242</div>
+          <div class="fb-stat-sub">153 unique assets</div>
+        </div>
+      </div>
+
+      <div>
+        <div class="fb-stat-label" style="font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;font-family:'IBM Plex Mono',monospace;margin-bottom:8px;">Issue types (not helpful)</div>
+        <div id="issue-dist"></div>
+      </div>
+
+      <div>
+        <div class="fb-stat-label" style="font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;font-family:'IBM Plex Mono',monospace;margin-bottom:8px;">Monthly volume</div>
+        <div id="monthly-chart" class="monthly-chart"></div>
+      </div>
+
+      <div class="info-note amber" style="font-size:11px;margin-top:0;">
+        ⚠ 0.8% response rate vs. 31K downloads. Feedback skews negative — use alongside download data for full picture.
+      </div>
+    </div>
+
+    <!-- Main feedback content -->
+    <div style="flex:1;display:flex;flex-direction:column;overflow:hidden;">
+
+      <!-- Filters -->
+      <div class="fb-filters">
+        <span class="fb-filter-label">Show</span>
+        <button class="filt-btn on" id="filt-all" onclick="setFilt('all',this)">All</button>
+        <button class="filt-btn" id="filt-nothelp" onclick="setFilt('nothelp',this)">⚠ Not helpful only</button>
+        <button class="filt-btn" id="filt-attention" onclick="setFilt('attention',this)">🔴 Needs attention</button>
+        <span style="width:1px;height:16px;background:var(--border2);margin:0 2px;"></span>
+        <span class="fb-filter-label">Type</span>
+        <button class="filt-btn" id="filt-sp" onclick="setFilt('sp',this)">Success Pack</button>
+        <button class="filt-btn" id="filt-asset" onclick="setFilt('asset',this)">Asset</button>
+        <input class="fb-search" id="fb-search" placeholder="Search assets…" oninput="renderFeedback()" />
+      </div>
+
+      <div class="fb-main" id="fb-main">
+        <!-- rendered by JS -->
+      </div>
+    </div>
+  </div>
+
+</div><!-- /main -->
+
 <script>
+// ════════════════════════════════════════════════
+// FEEDBACK DATA
+// ════════════════════════════════════════════════
+const FB_DATA = {"total":242,"helpful":157,"not_helpful":85,"helpful_pct":65,"unique_assets":153,"issue_dist":[["Not accurate",22],["Needs more detail",20],["Other",19],["Out of date",18],["More graphics",1]],"cat_dist":[["Compliments",154],["Improvements",49],["Technical",14],["User training",12],["Quality",4],["Platform",2]],"monthly":[["2025-09",52],["2025-10",45],["2025-11",17],["2025-12",39],["2026-01",43],["2026-02",20],["2026-03",26]],"assets":[{"name":"Create your own app","type":"Success Pack","total":19,"helpful":7,"not_helpful":12,"helpful_pct":37,"top_issues":[["Out of date",5],["Needs more detail",4],["Not accurate",2]],"top_cats":[["Compliments",7],["Improvements",6],["User training",3]],"comments":["This is beyond annoying and something that happens way too often! The URL in the instructions no longer exists.","Can you please help to check on the Go-Live Implementation Plan section — it's not specific for App Engine.","The XLM file to explore in the Lab doesn't work anymore!","I downloaded the file, saved it and tried to import the XML to my instance but it failed."],"months":{"2026-03":6,"2026-02":3,"2026-01":5,"2025-12":1,"2025-10":1,"2025-09":3}},{"name":"ITSM modernize IT service management","type":"Success Pack","total":9,"helpful":9,"not_helpful":0,"helpful_pct":100,"top_issues":[],"top_cats":[["Compliments",9]],"comments":[],"months":{"2026-01":2,"2025-12":2,"2025-11":1,"2025-10":1,"2025-09":3}},{"name":"CSDM Data Model Examples","type":"Asset Version","total":8,"helpful":5,"not_helpful":3,"helpful_pct":62,"top_issues":[["Not accurate",1],["More graphics",1]],"top_cats":[["Compliments",4],["Improvements",2],["Platform",1]],"comments":["Slide 69 is mentioning incorrect table relationships for catalog items.","Display file size would be great.","There is nothing here!"],"months":{"2026-02":1,"2026-01":1,"2025-12":1,"2025-11":1,"2025-09":4}},{"name":"What are the best practices for customization?","type":"Asset Version","total":4,"helpful":4,"not_helpful":0,"helpful_pct":100,"top_issues":[],"top_cats":[["Compliments",4]],"comments":[],"months":{"2026-03":1,"2026-01":1,"2025-10":1,"2025-09":1}},{"name":"ServiceNow Capability Map","type":"Asset Version","total":4,"helpful":4,"not_helpful":0,"helpful_pct":100,"top_issues":[],"top_cats":[["Compliments",4]],"comments":[],"months":{"2025-12":1,"2025-11":1,"2025-10":1,"2025-09":1}},{"name":"HR service delivery with employee center","type":"Success Pack","total":3,"helpful":3,"not_helpful":0,"helpful_pct":100,"top_issues":[],"top_cats":[["Compliments",3]],"comments":[],"months":{"2026-03":1,"2025-12":1,"2025-09":1}},{"name":"Foundation - Workshop Core #1","type":"Asset Version","total":3,"helpful":1,"not_helpful":2,"helpful_pct":33,"top_issues":[["Out of date",1],["Needs more detail",1]],"top_cats":[["Improvements",1],["User training",1],["Compliments",1]],"comments":["Based on recent delivery experience, the Workshop Core asset needs a revised version that improves the discussion flow.","Document wouldn't load, please fix."],"months":{"2026-03":1,"2026-01":1,"2025-12":1}},{"name":"Foundations - Starter Stories and Story Tests","type":"Asset Version","total":3,"helpful":1,"not_helpful":2,"helpful_pct":33,"top_issues":[["Out of date",2]],"top_cats":[["Improvements",2],["Compliments",1]],"comments":["The email address in the reply instructions was incorrect — could not submit additional materials.","The starter stories are difficult for delivery teams to use directly during sprint planning."],"months":{"2026-03":2,"2025-10":1}},{"name":"Business-smart customization","type":"Asset Version","total":3,"helpful":3,"not_helpful":0,"helpful_pct":100,"top_issues":[],"top_cats":[["Compliments",3]],"comments":[],"months":{"2026-03":1,"2025-12":1,"2025-10":1}},{"name":"GRC implementation","type":"Success Pack","total":3,"helpful":2,"not_helpful":1,"helpful_pct":67,"top_issues":[["Other",1]],"top_cats":[["Compliments",2],["User training",1]],"comments":["This doesn't tell me anything about how to actually run the system — it's all fluff project management items."],"months":{"2026-02":1,"2025-09":2}},{"name":"Fine tune platform with performance administration","type":"Asset Version","total":3,"helpful":1,"not_helpful":2,"helpful_pct":33,"top_issues":[["Out of date",1],["Not accurate",1]],"top_cats":[["Technical",2],["Compliments",1]],"comments":["The very first task references the System Diagnostics homepage, which has been deprecated for years.","Still referencing legacy items: System Diagnostics homepage, Burst scheduler workers, Node Log File Download."],"months":{"2026-01":1,"2025-11":1,"2025-09":1}},{"name":"Strategic Portfolio Management (SPM) - Scoping Guide","type":"Asset Version","total":3,"helpful":3,"not_helpful":0,"helpful_pct":100,"top_issues":[],"top_cats":[["Compliments",3]],"comments":[],"months":{"2026-01":2,"2025-10":1}},{"name":"Now Assist for ITSM (Success Pack)","type":"Success Pack","total":3,"helpful":3,"not_helpful":0,"helpful_pct":100,"top_issues":[],"top_cats":[["Compliments",3]],"comments":[],"months":{"2026-01":1,"2025-10":2}},{"name":"Change Management Process Guide","type":"Asset Version","total":3,"helpful":2,"not_helpful":1,"helpful_pct":67,"top_issues":[["Not accurate",1]],"top_cats":[["Compliments",2],["Technical",1]],"comments":["Page 11 says 'Predicting Intelligence' — should be 'Predictive Intelligence'."],"months":{"2025-11":1,"2025-10":1,"2025-09":1}},{"name":"Core platform upgrade","type":"Success Pack","total":3,"helpful":3,"not_helpful":0,"helpful_pct":100,"top_issues":[],"top_cats":[["Compliments",3]],"comments":[],"months":{"2025-09":3}},{"name":"Incident Management - Process Guide","type":"Asset Version","total":2,"helpful":0,"not_helpful":2,"helpful_pct":0,"top_issues":[["Out of date",1],["Other",1]],"top_cats":[["Compliments",1]],"comments":["The links to the editable process diagrams go to a page saying the content no longer exists."],"months":{"2026-03":1,"2025-10":1}},{"name":"Platform Core Workshop Agenda Template","type":"Asset Version","total":2,"helpful":1,"not_helpful":1,"helpful_pct":50,"top_issues":[["Out of date",1]],"top_cats":[["Improvements",1],["Compliments",1]],"comments":["A revised version that improves the structure and flow for platform foundation discussions would be useful."],"months":{"2026-03":1,"2025-12":1}},{"name":"Change Enablement Project Guidance Template","type":"Asset Version","total":2,"helpful":1,"not_helpful":1,"helpful_pct":50,"top_issues":[["Needs more detail",1]],"top_cats":[["Improvements",1],["Compliments",1]],"comments":["The template references tabs that do not exist and needs better info on what each task means."],"months":{"2026-03":1,"2025-12":1}},{"name":"Business Case Template","type":"Asset Version","total":2,"helpful":1,"not_helpful":1,"helpful_pct":50,"top_issues":[["Other",1]],"top_cats":[["Improvements",1],["Compliments",1]],"comments":["Generic BC template. Focus is on financial impact but doesn't show a real BC example."],"months":{"2026-03":1,"2026-01":1}},{"name":"Retail Industry Products - Process Guide","type":"Asset Version","total":2,"helpful":0,"not_helpful":2,"helpful_pct":0,"top_issues":[["Not accurate",1],["Other",1]],"top_cats":[["Improvements",1],["User training",1]],"comments":["A URL link to case management - process guide is broken and cannot be found.","Appears to be a duplicate of another asset."],"months":{"2026-02":2}},{"name":"Digital portfolio management","type":"Success Pack","total":2,"helpful":0,"not_helpful":2,"helpful_pct":0,"top_issues":[["Other",1],["Not accurate",1]],"top_cats":[["User training",1],["Improvements",1]],"comments":["Need success packs filtered by product.","Page is all about SPM and not about DPM — not clear at all how DPM fits in."],"months":{"2026-01":1,"2025-09":1}},{"name":"Now Assist - Implementation Insights","type":"Asset Version","total":2,"helpful":0,"not_helpful":2,"helpful_pct":0,"top_issues":[["Needs more detail",1],["Not accurate",1]],"top_cats":[["Technical",1],["Improvements",1]],"comments":["What is the general best practice for managing deployment of Now Assist skills from sub-prod to prod?","External content connector works fine with Now Assist in AI Search and VA."],"months":{"2026-01":1,"2025-11":1}},{"name":"Platform Questionnaire","type":"Asset Version","total":2,"helpful":0,"not_helpful":2,"helpful_pct":0,"top_issues":[["Not accurate",1],["Other",1]],"top_cats":[["Improvements",2]],"comments":["Expected a delivery-oriented discovery tool — not what was found.","Typo: 'feddback' should be 'feedback'."],"months":{"2026-01":1,"2025-10":1}},{"name":"Employee Center - Process Workshop Presentation","type":"Asset Version","total":2,"helpful":0,"not_helpful":2,"helpful_pct":0,"top_issues":[["Needs more detail",1],["Out of date",1]],"top_cats":[["Improvements",1]],"comments":["Mentions SharePoint Online Search Connector in slide 153, but this is out of date.","'You last downloaded this on...' was a helpful feature in Now Create that's now missing."],"months":{"2025-12":2}},{"name":"Change Management - Process Workshop","type":"Asset Version","total":2,"helpful":0,"not_helpful":2,"helpful_pct":0,"top_issues":[["Not accurate",2]],"top_cats":[["Technical",1],["Quality",1]],"comments":["Slide 88 does not present OOTB notifications correctly.","Slide 18 says 'Customer Advisory Board' — should be 'Change Advisory Board (CAB)'."],"months":{"2025-11":1,"2025-09":1}},{"name":"Now Assist for CMDB - Implementation Guide","type":"Asset Version","total":2,"helpful":0,"not_helpful":2,"helpful_pct":0,"top_issues":[["Not accurate",2]],"top_cats":[["Improvements",2]],"comments":["The PDF title says CMDB but the content is actually Now Assist for ITSM.","Wrong content uploaded — Now Assist for ITSM instead of CMDB."],"months":{"2025-09":2}},{"name":"Employee Center - Process Guide","type":"Asset Version","total":2,"helpful":0,"not_helpful":2,"helpful_pct":0,"top_issues":[["Not accurate",2]],"top_cats":[["Quality",2]],"comments":["Process guide refers to Connect Support feature which has been deprecated."],"months":{"2025-09":2}},{"name":"PPM - Demand Process Guide","type":"Asset Version","total":2,"helpful":1,"not_helpful":1,"helpful_pct":50,"top_issues":[["Other",1]],"top_cats":[["Improvements",1],["Compliments",1]],"comments":["Release notes should include detail on what changed, not just that the asset was updated."],"months":{"2026-02":1,"2025-10":1}},{"name":"Hardware Asset Management - Process Guide","type":"Asset Version","total":2,"helpful":1,"not_helpful":1,"helpful_pct":50,"top_issues":[["Needs more detail",1]],"top_cats":[["Compliments",1]],"comments":["Please add RACI matrix sections for HAM 13.0–16.0 lifecycle processes."],"months":{"2026-02":1,"2025-11":1}},{"name":"CMDB, CSDM and Product Models","type":"Asset Version","total":2,"helpful":1,"not_helpful":1,"helpful_pct":50,"top_issues":[["Out of date",1]],"top_cats":[["Technical",2]],"comments":["CSDM diagram is out of date — now at CSDM 5 / Zurich."],"months":{"2026-01":2}},{"name":"AI Search - Implementation Guide","type":"Asset Version","total":2,"helpful":1,"not_helpful":1,"helpful_pct":50,"top_issues":[["Needs more detail",1]],"top_cats":[["User training",1],["Compliments",1]],"comments":["The documentation mentions AIS Benchmark Template.xlsx but this file is not available on the page."],"months":{"2025-10":1,"2025-09":1}}],"attention":[{"name":"Now Assist for CMDB - Implementation Guide","type":"Asset Version","total":2,"helpful_pct":0,"top_issues":[["Not accurate",2]],"comments":["Wrong content uploaded — Now Assist for ITSM instead of CMDB."]},{"name":"Employee Center - Process Guide","type":"Asset Version","total":2,"helpful_pct":0,"top_issues":[["Not accurate",2]],"comments":["Process guide refers to deprecated Connect Support feature."]},{"name":"Change Management - Process Workshop","type":"Asset Version","total":2,"helpful_pct":0,"top_issues":[["Not accurate",2]],"comments":["Multiple factual errors in slides 18 and 88."]},{"name":"Retail Industry Products - Process Guide","type":"Asset Version","total":2,"helpful_pct":0,"top_issues":[["Not accurate",1],["Other",1]],"comments":["Broken links and possible duplicate asset."]},{"name":"Incident Management - Process Guide","type":"Asset Version","total":2,"helpful_pct":0,"top_issues":[["Out of date",1]],"comments":["Editable process diagram links are broken."]},{"name":"Platform Questionnaire","type":"Asset Version","total":2,"helpful_pct":0,"top_issues":[["Not accurate",1]],"comments":["Content doesn't match expected use case."]},{"name":"Employee Center - Process Workshop Presentation","type":"Asset Version","total":2,"helpful_pct":0,"top_issues":[["Out of date",1]],"comments":["Out of date SharePoint connector references."]},{"name":"Digital portfolio management","type":"Success Pack","total":2,"helpful_pct":0,"top_issues":[["Not accurate",1]],"comments":["Mislabeled as DPM — content is actually about SPM."]},{"name":"Now Assist - Implementation Insights","type":"Asset Version","total":2,"helpful_pct":0,"top_issues":[["Needs more detail",1]],"comments":["Lacks deployment best practices."]},{"name":"Create your own app","type":"Success Pack","total":19,"helpful_pct":37,"top_issues":[["Out of date",5],["Needs more detail",4]],"comments":["Broken URLs throughout the learning course experience."]}]};
+
+// ════════════════════════════════════════════════
+// FEEDBACK PANEL LOGIC
+// ════════════════════════════════════════════════
+let fbFilter = 'all';
+let fbSort = 'total';
+let expandedCards = new Set();
+
+function scoreColor(pct) {
+  if (pct >= 75) return 'green';
+  if (pct >= 40) return 'amber';
+  return 'red';
+}
+
+function issuePillColor(issue) {
+  if (issue === 'Not accurate') return 'tag-red';
+  if (issue === 'Out of date') return 'tag-amber';
+  if (issue === 'Needs more detail') return 'tag-blue';
+  return 'tag-purple';
+}
+
+function renderIssueDist() {
+  const max = FB_DATA.issue_dist[0][1];
+  const colors = ['#dc2626','#d97706','#2e6fda','#6b21a8','#0e7c4a'];
+  document.getElementById('issue-dist').innerHTML = FB_DATA.issue_dist.map(([label, count], i) => `
+    <div class="mini-bar-row">
+      <div class="mini-bar-label" title="${label}">${label}</div>
+      <div class="mini-bar-track"><div class="mini-bar-fill" style="background:${colors[i]};width:${Math.round(count/max*100)}%"></div></div>
+      <div class="mini-bar-count">${count}</div>
+    </div>`).join('');
+}
+
+function renderMonthlyChart() {
+  const months = FB_DATA.monthly;
+  const max = Math.max(...months.map(m=>m[1]));
+  const labels = {
+    '2025-09':'Sep','2025-10':'Oct','2025-11':'Nov',
+    '2025-12':'Dec','2026-01':'Jan','2026-02':'Feb','2026-03':'Mar'
+  };
+  document.getElementById('monthly-chart').innerHTML = `
+    <div style="display:flex;align-items:flex-end;gap:4px;height:36px;margin-bottom:4px;">
+      ${months.map(([m,v]) => `<div style="flex:1;background:var(--accent);opacity:.6;border-radius:2px 2px 0 0;height:${Math.round(v/max*100)}%;min-height:4px;" title="${labels[m]}: ${v}"></div>`).join('')}
+    </div>
+    <div style="display:flex;gap:4px;">
+      ${months.map(([m]) => `<div style="flex:1;font-size:9px;color:var(--text3);font-family:'IBM Plex Mono',monospace;text-align:center;">${labels[m]}</div>`).join('')}
+    </div>`;
+}
+
+function getFilteredAssets() {
+  const q = (document.getElementById('fb-search')?.value || '').toLowerCase().trim();
+  let assets = [...FB_DATA.assets];
+
+  if (fbFilter === 'nothelp') assets = assets.filter(a => a.not_helpful > 0);
+  else if (fbFilter === 'attention') assets = assets.filter(a => a.helpful_pct < 50 && a.total >= 2);
+  else if (fbFilter === 'sp') assets = assets.filter(a => a.type === 'Success Pack');
+  else if (fbFilter === 'asset') assets = assets.filter(a => a.type === 'Asset Version' || a.type === 'Task Version');
+
+  if (q) assets = assets.filter(a => a.name.toLowerCase().includes(q));
+
+  if (fbSort === 'total') assets.sort((a,b) => b.total - a.total);
+  else if (fbSort === 'helpful') assets.sort((a,b) => a.helpful_pct - b.helpful_pct);
+  else if (fbSort === 'alpha') assets.sort((a,b) => a.name.localeCompare(b.name));
+
+  return assets;
+}
+
+function renderFeedback() {
+  const container = document.getElementById('fb-main');
+  const assets = getFilteredAssets();
+
+  // Attention banner — only show in default view
+  let attentionHtml = '';
+  if (fbFilter === 'all' || fbFilter === 'attention') {
+    const attn = FB_DATA.attention.slice(0, 5);
+    attentionHtml = `
+      <div class="attention-banner">
+        <div class="attention-title">🔴 Needs Attention — 0% helpful rate</div>
+        ${attn.map(a => `
+          <div class="attention-item">
+            <div class="att-name" title="${a.name}">${a.name}</div>
+            <div class="att-type">${a.type.replace(' Version','')}</div>
+            <div class="att-pct">${a.helpful_pct}%</div>
+          </div>`).join('')}
+      </div>`;
+  }
+
+  const tableHtml = `
+    <div class="fb-table-wrap">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+        <div class="fb-section-label" style="flex:1;">All Assets with Feedback <span style="color:var(--text3);font-weight:400;font-size:10px;">(${assets.length} shown)</span></div>
+      </div>
+      <div class="fb-sort-row">
+        <span class="sort-lbl">Sort:</span>
+        <button class="sort-btn ${fbSort==='total'?'on':''}" onclick="setSort('total',this)">Most feedback</button>
+        <button class="sort-btn ${fbSort==='helpful'?'on':''}" onclick="setSort('helpful',this)">Lowest helpful%</button>
+        <button class="sort-btn ${fbSort==='alpha'?'on':''}" onclick="setSort('alpha',this)">A–Z</button>
+      </div>
+      ${assets.length === 0 ? '<div class="fb-empty">No assets match the current filters.</div>' :
+        assets.map(a => renderAssetCard(a)).join('')}
+    </div>`;
+
+  container.innerHTML = attentionHtml + tableHtml;
+
+  // Animate mini bars
+  requestAnimationFrame(() => {
+    container.querySelectorAll('.mini-bar-fill').forEach(el => {
+      const w = el.style.width; el.style.width = '0';
+      requestAnimationFrame(() => { el.style.width = w; });
+    });
+  });
+}
+
+function renderAssetCard(a) {
+  const isExp = expandedCards.has(a.name);
+  const col = scoreColor(a.helpful_pct);
+  const monthOrder = ['2025-09','2025-10','2025-11','2025-12','2026-01','2026-02','2026-03'];
+  const monthLabels = {
+    '2025-09':'S','2025-10':'O','2025-11':'N',
+    '2025-12':'D','2026-01':'J','2026-02':'F','2026-03':'M'
+  };
+  const monthMax = Math.max(...monthOrder.map(m => a.months[m] || 0), 1);
+
+  const sparkHtml = monthOrder.map(m => {
+    const v = a.months[m] || 0;
+    const h = v ? Math.max(Math.round(v/monthMax*100), 12) : 4;
+    return `<div class="spark-wrap">
+      <div class="spark-bar" style="height:${h}%;opacity:${v?0.7:0.2};"></div>
+      <div class="spark-label">${monthLabels[m]}</div>
+    </div>`;
+  }).join('');
+
+  const issuesPills = a.top_issues.map(([issue, count]) =>
+    `<span class="issue-pill tag ${issuePillColor(issue)}">${issue} <strong>${count}</strong></span>`
+  ).join('');
+
+  const commentsHtml = a.comments.length ?
+    a.comments.map(c => `<div class="comment-block">"${c.length > 160 ? c.slice(0,160)+'…' : c}"</div>`).join('') :
+    '<div style="font-size:12px;color:var(--text3);font-style:italic;">No issue comments — all feedback was complimentary.</div>';
+
+  return `
+    <div class="asset-card ${isExp?'expanded':''}" id="card-${CSS.escape(a.name)}">
+      <div class="asset-card-header" onclick="toggleCard('${a.name.replace(/'/g,"\\'")}')">
+        <div class="ac-score ${col}">${a.helpful_pct}%</div>
+        <div class="ac-info">
+          <div class="ac-name">${a.name}</div>
+          <div class="ac-meta">
+            <span class="ac-type">${a.type}</span>
+            <span class="ac-total">${a.total} response${a.total!==1?'s':''} · ${a.helpful} helpful / ${a.not_helpful} not</span>
+          </div>
+          ${issuesPills ? `<div class="ac-issues" style="margin-top:4px;">${issuesPills}</div>` : ''}
+        </div>
+        <div class="ac-right">
+          <div class="helpful-bar-wrap">
+            <div class="helpful-bar"><div class="helpful-bar-fill ${col}" style="width:${a.helpful_pct}%"></div></div>
+            <div class="helpful-pct-label ${col}">${a.helpful_pct}%</div>
+          </div>
+          <span class="expand-chevron">▼</span>
+        </div>
+      </div>
+      <div class="asset-detail">
+        <div class="detail-grid">
+          <div>
+            <div class="detail-col-label">Issue feedback</div>
+            ${issuesPills || '<span style="font-size:12px;color:var(--text3);">No issues flagged</span>'}
+            <div style="margin-top:12px;">
+              <div class="detail-col-label">User comments</div>
+              ${commentsHtml}
+            </div>
+          </div>
+          <div>
+            <div class="detail-col-label">Feedback volume by month</div>
+            <div style="display:flex;align-items:flex-end;gap:3px;height:40px;margin-bottom:4px;">
+              ${sparkHtml}
+            </div>
+            <div style="margin-top:12px;">
+              <div class="detail-col-label">Category breakdown</div>
+              ${a.top_cats.map(([cat, count]) =>
+                `<div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;font-size:12px;">
+                  <span style="flex:1;color:var(--text2);">${cat}</span>
+                  <span style="font-family:'IBM Plex Mono',monospace;color:var(--text3);">${count}</span>
+                </div>`).join('')}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>`;
+}
+
+function toggleCard(name) {
+  if (expandedCards.has(name)) expandedCards.delete(name);
+  else expandedCards.add(name);
+  renderFeedback();
+}
+
+function setFilt(f, btn) {
+  fbFilter = f;
+  document.querySelectorAll('.filt-btn').forEach(b => { b.className = 'filt-btn'; });
+  btn.className = f === 'attention' ? 'filt-btn on-red' : 'filt-btn on';
+  expandedCards.clear();
+  renderFeedback();
+}
+
+function setSort(s, btn) {
+  fbSort = s;
+  document.querySelectorAll('.sort-btn').forEach(b => b.classList.remove('on'));
+  btn.classList.add('on');
+  renderFeedback();
+}
+
+// ════════════════════════════════════════════════
+// TAB SWITCHING
+// ════════════════════════════════════════════════
+function switchTab(tab) {
+  document.getElementById('panel-analytics').style.display = tab === 'analytics' ? 'flex' : 'none';
+  document.getElementById('panel-feedback').style.display = tab === 'feedback' ? 'flex' : 'none';
+  document.getElementById('tab-analytics').className = 'tab-btn' + (tab==='analytics'?' active':'');
+  document.getElementById('tab-feedback').className = 'tab-btn' + (tab==='feedback'?' active':'');
+  if (tab === 'feedback') {
+    renderIssueDist();
+    renderMonthlyChart();
+    renderFeedback();
+    // animate sidebar bars
+    setTimeout(() => {
+      document.querySelectorAll('.mini-bar-fill').forEach(el => {
+        const w = el.style.width; el.style.width='0';
+        requestAnimationFrame(() => { el.style.width = w; });
+      });
+    }, 50);
+  }
+}
+
+// ════════════════════════════════════════════════
+// ORIGINAL ANALYTICS ENGINE (unchanged)
+// ════════════════════════════════════════════════
 const PERIOD = 'Feb 17 – Mar 18, 2026';
 
-// ── REAL DATA ──────────────────────────────────────────────────────────────
 const assetDownloads = [
   {name:'CSDM Data Model Examples',dl:445,product:'CSDM/CMDB'},
   {name:'CMDB - Project Workshop',dl:355,product:'CSDM/CMDB'},
@@ -329,23 +778,21 @@ const recs = [
   {name:'ITSM Intelligent Automation',type:'success pack',clicks:25},
 ];
 
-// Product totals — downloads only as primary metric
 const products = [
-  {name:'ITSM',        dl:3533, assets:[['Incident Management - Process Guide',292],['Service Operations Rec. Impl. Sequence',249],['Incident Management - Process Workshop',203],['Change Management Process Guide',202],['Change Management - Process Workshop',183],['Service Catalog - Process Workshop',153],['Major Incident Management - Process Workshop',134],['Major Incident Management Process Guide',133]]},
-  {name:'CSDM/CMDB',   dl:3427, assets:[['CSDM Data Model Examples',445],['CMDB - Project Workshop',355],['CMDB - Process Guide',249],['CSDM Workshop - Getting Started',225],['CMDB - Lifecycle Stage and Status',168],['CSDM Overview',155],['CSDM Product Views',120],['CMDB Governance',113]]},
-  {name:'SPM/PPM',     dl:1169, assets:[['Project Charter Template',223],['SPM - Product Architecture Blueprint',162],['Demand Management - Workshop Presentation',136],['Strategic Portfolio Mgmt - Rec. Impl. Sequence',132],['Project Portfolio Mgmt - Process Workshop',131]]},
-  {name:'Platform',    dl:1534, assets:[['ServiceNow Capability Map',342],['Business Case Template',145],['Solution Overview Template',126],['Discovery - Project Workshop Presentation',121],['Platform Operating Model',118],['Business-Smart Customization',114],['ServiceNow Operating Model Diagram',111]]},
-  {name:'HAM/SAM',     dl:918,  assets:[['Hardware Asset Management - Process Workshop',193],['Hardware Asset Management - Process Guide',147],['Software Asset Management - Process Guide',140],['Software Asset Management - Process Workshop',130],['HAM - Rec. Implementation Sequence',115]]},
-  {name:'HRSD',        dl:596,  assets:[['HR Service Delivery Rec. Impl. Sequence',172],['Employee Center - Process Workshop',140],['HRSD - HR Case Management - Process Workshop',112]]},
-  {name:'GRC/IRM',     dl:480,  assets:[['Risk Management - Process Workshop',132],['GRC Policy and Compliance - Process Guide',127],['Policy & Compliance - Process Workshop',111],['IRM Rec. Implementation Sequence',110]]},
-  {name:'CSM',         dl:316,  assets:[['CSM - Rec. Implementation Sequence',316]]},
-  {name:'Now Assist/AI',dl:232, assets:[['Now Assist for ITSM - Implementation Guide',117],['Now Assist for Core Platform - Impl. Workshop',115]]},
+  {name:'ITSM',dl:3533,assets:[['Incident Management - Process Guide',292],['Service Operations Rec. Impl. Sequence',249],['Incident Management - Process Workshop',203],['Change Management Process Guide',202],['Change Management - Process Workshop',183],['Service Catalog - Process Workshop',153],['Major Incident Management - Process Workshop',134],['Major Incident Management Process Guide',133]]},
+  {name:'CSDM/CMDB',dl:3427,assets:[['CSDM Data Model Examples',445],['CMDB - Project Workshop',355],['CMDB - Process Guide',249],['CSDM Workshop - Getting Started',225],['CMDB - Lifecycle Stage and Status',168],['CSDM Overview',155],['CSDM Product Views',120],['CMDB Governance',113]]},
+  {name:'SPM/PPM',dl:1169,assets:[['Project Charter Template',223],['SPM - Product Architecture Blueprint',162],['Demand Management - Workshop Presentation',136],['Strategic Portfolio Mgmt - Rec. Impl. Sequence',132],['Project Portfolio Mgmt - Process Workshop',131]]},
+  {name:'Platform',dl:1534,assets:[['ServiceNow Capability Map',342],['Business Case Template',145],['Solution Overview Template',126],['Discovery - Project Workshop Presentation',121],['Platform Operating Model',118],['Business-Smart Customization',114],['ServiceNow Operating Model Diagram',111]]},
+  {name:'HAM/SAM',dl:918,assets:[['Hardware Asset Management - Process Workshop',193],['Hardware Asset Management - Process Guide',147],['Software Asset Management - Process Guide',140],['Software Asset Management - Process Workshop',130],['HAM - Rec. Implementation Sequence',115]]},
+  {name:'HRSD',dl:596,assets:[['HR Service Delivery Rec. Impl. Sequence',172],['Employee Center - Process Workshop',140],['HRSD - HR Case Management - Process Workshop',112]]},
+  {name:'GRC/IRM',dl:480,assets:[['Risk Management - Process Workshop',132],['GRC Policy and Compliance - Process Guide',127],['Policy & Compliance - Process Workshop',111],['IRM Rec. Implementation Sequence',110]]},
+  {name:'CSM',dl:316,assets:[['CSM - Rec. Implementation Sequence',316]]},
+  {name:'Now Assist/AI',dl:232,assets:[['Now Assist for ITSM - Implementation Guide',117],['Now Assist for Core Platform - Impl. Workshop',115]]},
 ];
 const maxDl = products[0].dl;
 
-// ── HELPERS ────────────────────────────────────────────────────────────────
-function bars(items, lk, vk, n=8, cls=''){
-  const top=items.slice(0,n), max=top[0]?top[0][vk]:1;
+function bars(items,lk,vk,n=8,cls=''){
+  const top=items.slice(0,n),max=top[0]?top[0][vk]:1;
   return '<div class="bar-chart">'+top.map(i=>`
     <div class="bar-row">
       <div class="bar-label" title="${i[lk]}">${i[lk]}</div>
@@ -353,10 +800,9 @@ function bars(items, lk, vk, n=8, cls=''){
       <div class="bar-count">${i[vk].toLocaleString()}</div>
     </div>`).join('')+'</div>';
 }
-
-function rawBars(pairs, n=8, cls=''){
-  if(!pairs.length) return '<p style="color:var(--text3);font-size:13px;font-style:italic">No data in this export</p>';
-  const top=pairs.slice(0,n), max=top[0][1]||1;
+function rawBars(pairs,n=8,cls=''){
+  if(!pairs.length) return '<p style="color:var(--text3);font-size:13px;font-style:italic">No data</p>';
+  const top=pairs.slice(0,n),max=top[0][1]||1;
   return '<div class="bar-chart">'+top.map(([name,val])=>`
     <div class="bar-row">
       <div class="bar-label" title="${name}">${name}</div>
@@ -365,10 +811,9 @@ function rawBars(pairs, n=8, cls=''){
     </div>`).join('')+'</div>';
 }
 
-// ── RESPONSES ──────────────────────────────────────────────────────────────
 function r_product_overview(){
-  const cards = products.map(p=>{
-    const pct = Math.round(p.dl/maxDl*100);
+  const cards=products.map(p=>{
+    const pct=Math.round(p.dl/maxDl*100);
     return `<div class="product-card" onclick="quickQuery('How are ${p.name} downloads performing?')">
       <div class="pc-name">${p.name}</div>
       <div class="pc-value">${p.dl.toLocaleString()}</div>
@@ -376,54 +821,35 @@ function r_product_overview(){
       <div class="pc-bar"><div class="pc-bar-fill" style="width:${pct}%"></div></div>
     </div>`;
   }).join('');
-  return `
-    <div class="rh">Downloads by Product · ${PERIOD}</div>
-    <p style="color:var(--text2);font-size:13px;margin-bottom:12px;">Total: <strong style="color:var(--text)">31,137 downloads</strong> across all BPL assets. Click any product to drill in.</p>
+  return `<div class="rh">Downloads by Product · ${PERIOD}</div>
+    <p style="color:var(--text2);font-size:13px;margin-bottom:12px;">Total: <strong style="color:var(--text)">31,137 downloads</strong>. Click any product to drill in.</p>
     <div class="product-grid">${cards}</div>
-    <div class="info-note amber">⚠ Segment data (who downloaded — partner, customer, internal) requires the user identity eVar in Adobe. Not yet available in this export.</div>`;
+    <div class="info-note amber">⚠ Segment data (who downloaded) requires user identity eVar in Adobe. Not yet available.</div>`;
 }
 
 function r_product(p){
-  const total = p.dl;
-  const pct = Math.round(total/31137*100);
-  return `
-    <div class="rh">${p.name} Downloads · ${PERIOD}</div>
+  const total=p.dl,pct=Math.round(total/31137*100);
+  return `<div class="rh">${p.name} Downloads · ${PERIOD}</div>
     <div class="stat-row">
-      <div class="stat-box">
-        <div class="stat-box-label">Downloads</div>
-        <div class="stat-box-value">${total.toLocaleString()}</div>
-        <div class="stat-box-sub">${pct}% of all BPL downloads</div>
-      </div>
-      <div class="stat-box">
-        <div class="stat-box-label">Assets tracked</div>
-        <div class="stat-box-value">${p.assets.length}</div>
-        <div class="stat-box-sub">in this export</div>
-      </div>
-      <div class="stat-box">
-        <div class="stat-box-label">Top asset</div>
-        <div class="stat-box-value" style="font-size:13px;line-height:1.3">${p.assets[0][0].split(' - ')[0].split(' Rec')[0]}</div>
-        <div class="stat-box-sub">${p.assets[0][1]} downloads</div>
-      </div>
+      <div class="stat-box"><div class="stat-box-label">Downloads</div><div class="stat-box-value">${total.toLocaleString()}</div><div class="stat-box-sub">${pct}% of all BPL downloads</div></div>
+      <div class="stat-box"><div class="stat-box-label">Assets tracked</div><div class="stat-box-value">${p.assets.length}</div><div class="stat-box-sub">in this export</div></div>
+      <div class="stat-box"><div class="stat-box-label">Top asset</div><div class="stat-box-value" style="font-size:13px;line-height:1.3">${p.assets[0][0].split(' - ')[0].split(' Rec')[0]}</div><div class="stat-box-sub">${p.assets[0][1]} downloads</div></div>
     </div>
     <div class="rh" style="margin-top:14px">Asset Downloads</div>
-    ${rawBars(p.assets, 8)}
-    ${p.name==='Now Assist/AI'?'<div class="info-note blue" style="margin-top:10px">↗ Now Assist assets are in the library but driving relatively low traffic compared to core product areas. Worth reviewing discoverability and content coverage.</div>':''}
-    ${p.name==='CSM'?'<div class="info-note blue" style="margin-top:10px">↗ Only one CSM asset appears in this export. This may indicate a content gap or that other CSM assets aren\'t yet driving downloads.</div>':''}
-    <div class="info-note green" style="margin-top:10px">✓ Real data from Adobe Analytics export · OneCX report suite</div>`;
+    ${rawBars(p.assets,8)}
+    <div class="info-note green" style="margin-top:10px">✓ Real data from Adobe Analytics · OneCX report suite</div>`;
 }
 
 function r_top_downloads(){
-  return `
-    <div class="rh">Top Asset Downloads · ${PERIOD}</div>
-    <p style="color:var(--text2);font-size:13px;margin-bottom:12px;"><strong style="color:var(--text)">31,137 total downloads</strong> recorded. Top 10 individual assets:</p>
+  return `<div class="rh">Top Asset Downloads · ${PERIOD}</div>
+    <p style="color:var(--text2);font-size:13px;margin-bottom:12px;"><strong style="color:var(--text)">31,137 total downloads</strong>. Top 10:</p>
     ${bars(assetDownloads,'name','dl',10)}
-    <div class="info-note green">✓ Real data from your Adobe Analytics CSV export</div>
-    <div class="info-note amber">⚠ Segment breakdown (who downloaded) requires user identity eVar — not yet in this export.</div>`;
+    <div class="info-note green">✓ Real data from Adobe Analytics CSV export</div>
+    <div class="info-note amber">⚠ Segment breakdown requires user identity eVar — not yet in this export.</div>`;
 }
 
 function r_exports(){
-  return `
-    <div class="rh">Success Pack Exports · ${PERIOD}</div>
+  return `<div class="rh">Success Pack Exports · ${PERIOD}</div>
     <p style="color:var(--text2);font-size:13px;margin-bottom:12px;"><strong style="color:var(--text)">4,823 total exports.</strong> Create Your Own App accounts for 75%:</p>
     ${bars(spExports,'name','exports',10)}
     <div class="stat-row">
@@ -435,8 +861,7 @@ function r_exports(){
 }
 
 function r_recs(){
-  return `
-    <div class="rh">Recommendation Clicks · ${PERIOD}</div>
+  return `<div class="rh">Recommendation Clicks · ${PERIOD}</div>
     <div class="stat-row">
       <div class="stat-box"><div class="stat-box-label">Total</div><div class="stat-box-value">1,693</div></div>
       <div class="stat-box"><div class="stat-box-label">Success Packs</div><div class="stat-box-value">1,477</div><div class="stat-box-sub">87% of all clicks</div></div>
@@ -448,85 +873,65 @@ function r_recs(){
 }
 
 function r_low_performers(){
-  const sorted = [...assetDownloads].sort((a,b)=>a.dl-b.dl);
-  const bottom = sorted.slice(0,10);
-  const avg = Math.round(assetDownloads.reduce((s,a)=>s+a.dl,0)/assetDownloads.length);
-  const belowAvg = assetDownloads.filter(a=>a.dl<avg).length;
-  return `
-    <div class="rh">Low-Performing Assets · ${PERIOD}</div>
-    <p style="color:var(--text2);font-size:13px;margin-bottom:12px;">Assets with the fewest downloads this period. Average across all tracked assets is <strong style="color:var(--text)">${avg} downloads</strong>:</p>
+  const sorted=[...assetDownloads].sort((a,b)=>a.dl-b.dl);
+  const bottom=sorted.slice(0,10);
+  const avg=Math.round(assetDownloads.reduce((s,a)=>s+a.dl,0)/assetDownloads.length);
+  const belowAvg=assetDownloads.filter(a=>a.dl<avg).length;
+  return `<div class="rh">Low-Performing Assets · ${PERIOD}</div>
+    <p style="color:var(--text2);font-size:13px;margin-bottom:12px;">Average: <strong style="color:var(--text)">${avg} downloads</strong> per asset:</p>
     <div class="stat-row">
-      <div class="stat-box">
-        <div class="stat-box-label">Lowest download</div>
-        <div class="stat-box-value">${bottom[0].dl}</div>
-        <div class="stat-box-sub">${bottom[0].name.split(' - ')[0].slice(0,28)}</div>
-      </div>
-      <div class="stat-box">
-        <div class="stat-box-label">Below average</div>
-        <div class="stat-box-value">${belowAvg}</div>
-        <div class="stat-box-sub">of ${assetDownloads.length} tracked assets</div>
-      </div>
-      <div class="stat-box">
-        <div class="stat-box-label">Period average</div>
-        <div class="stat-box-value">${avg}</div>
-        <div class="stat-box-sub">downloads per asset</div>
-      </div>
+      <div class="stat-box"><div class="stat-box-label">Lowest</div><div class="stat-box-value">${bottom[0].dl}</div><div class="stat-box-sub">${bottom[0].name.slice(0,28)}</div></div>
+      <div class="stat-box"><div class="stat-box-label">Below avg</div><div class="stat-box-value">${belowAvg}</div><div class="stat-box-sub">of ${assetDownloads.length} assets</div></div>
+      <div class="stat-box"><div class="stat-box-label">Period avg</div><div class="stat-box-value">${avg}</div><div class="stat-box-sub">downloads/asset</div></div>
     </div>
     <div class="rh" style="margin-top:14px">Bottom 10 Assets</div>
     ${bars(bottom,'name','dl',10)}
-    <div class="info-note blue" style="margin-top:10px">↗ Low downloads may indicate a content gap, discoverability issue, outdated version, or simply low market demand for that topic right now. Worth reviewing with Sandra's team.</div>
-    <div class="info-note green">✓ Real data · Note this export only includes the top ~49 assets by traffic — assets with zero downloads don't appear in Adobe's export at all.</div>`;
+    <div class="info-note blue">↗ Worth reviewing with Sandra's team — low downloads may indicate outdated content or discoverability issues.</div>
+    <div class="info-note green">✓ Real data · Assets with zero downloads don't appear in Adobe's export.</div>`;
 }
 
 function r_default(q){
   const l=q.toLowerCase();
-  // try keyword match against asset list
   const matched=assetDownloads.filter(a=>
     a.name.toLowerCase().split(/[\s\-\/()]+/).some(w=>w.length>3&&l.includes(w))
   ).slice(0,6);
   if(matched.length){
     const total=matched.reduce((s,a)=>s+a.dl,0);
-    return `
-      <div class="rh">Search: "${q.slice(0,45)}"</div>
-      <p style="color:var(--text2);font-size:13px;margin-bottom:12px;">Found <strong style="color:var(--text)">${matched.length} asset(s)</strong> matching your query:</p>
+    return `<div class="rh">Search: "${q.slice(0,45)}"</div>
+      <p style="color:var(--text2);font-size:13px;margin-bottom:12px;">Found <strong style="color:var(--text)">${matched.length} asset(s)</strong>:</p>
       ${bars(matched,'name','dl',6)}
-      ${matched.length>1?`<p style="font-size:13px;color:var(--text2);margin-top:8px;">Combined downloads: <strong style="color:var(--text)">${total.toLocaleString()}</strong></p>`:''}
+      ${matched.length>1?`<p style="font-size:13px;color:var(--text2);margin-top:8px;">Combined: <strong>${total.toLocaleString()}</strong></p>`:''}
       <div class="info-note green">✓ Real data from Adobe Analytics export</div>`;
   }
-  // helpful fallback with what's actually available
-  const suggestions = [
+  const suggestions=[
     {label:'Product breakdown',q:'Show me downloads by product area'},
     {label:'Top downloads',q:'What are the top downloaded assets?'},
     {label:'Low performers',q:'Which assets have low downloads?'},
     {label:'ITSM',q:'How are ITSM downloads performing?'},
     {label:'CSDM/CMDB',q:'How are CSDM and CMDB downloads performing?'},
-    {label:'Success pack exports',q:'What are the top success pack exports?'},
+    {label:'Success packs',q:'What are the top success pack exports?'},
   ];
-  return `
-    <p style="color:var(--text2);font-size:13px;margin-bottom:12px;">No match found for <span class="tag tag-amber">${q.slice(0,50)}</span></p>
-    <p style="font-size:13px;color:var(--text2);line-height:1.65;margin-bottom:14px;">This dashboard covers <strong style="color:var(--text)">asset downloads, success pack exports, and recommendation clicks</strong> for Feb 17 – Mar 18, 2026. Here are some things you can ask:</p>
+  return `<p style="color:var(--text2);font-size:13px;margin-bottom:12px;">No match for <span class="tag tag-amber">${q.slice(0,50)}</span></p>
     <div style="display:flex;flex-wrap:wrap;gap:7px;">
       ${suggestions.map(s=>`<button onclick="quickQuery('${s.q}')" style="padding:7px 13px;background:var(--bg);border:1.5px solid var(--border2);border-radius:20px;font-size:12px;font-weight:500;color:var(--text2);cursor:pointer;font-family:'Inter',sans-serif;transition:all .14s;" onmouseover="this.style.borderColor='#b6dfc8';this.style.color='var(--accent)';this.style.background='var(--accent-light)'" onmouseout="this.style.borderColor='var(--border2)';this.style.color='var(--text2)';this.style.background='var(--bg)'">${s.label}</button>`).join('')}
     </div>`;
 }
 
-// ── CLASSIFIER ─────────────────────────────────────────────────────────────
-const productAliases = [
-  {key:'ITSM',        kws:['itsm','it service management','incident management','change management','problem management','service operations','service catalog','knowledge management']},
-  {key:'CSDM/CMDB',   kws:['csdm','cmdb']},
-  {key:'SPM/PPM',     kws:['spm','ppm','project portfolio','strategic portfolio','project charter','demand management','project & portfolio','create your own app']},
-  {key:'Platform',    kws:['platform','capability map','operating model','discovery','business case','business-smart']},
-  {key:'HAM/SAM',     kws:['ham','sam','hardware asset','software asset']},
-  {key:'HRSD',        kws:['hrsd','hr service','human resources','employee center','employee lifecycle']},
-  {key:'GRC/IRM',     kws:['grc','irm','risk management','policy','compliance','integrated risk','vulnerability','security']},
-  {key:'CSM',         kws:['csm','customer service management','modernize customer']},
+const productAliases=[
+  {key:'ITSM',kws:['itsm','it service management','incident management','change management','problem management','service operations','service catalog','knowledge management']},
+  {key:'CSDM/CMDB',kws:['csdm','cmdb']},
+  {key:'SPM/PPM',kws:['spm','ppm','project portfolio','strategic portfolio','project charter','demand management','create your own app']},
+  {key:'Platform',kws:['platform','capability map','operating model','discovery','business case','business-smart']},
+  {key:'HAM/SAM',kws:['ham','sam','hardware asset','software asset']},
+  {key:'HRSD',kws:['hrsd','hr service','human resources','employee center']},
+  {key:'GRC/IRM',kws:['grc','irm','risk management','policy','compliance','integrated risk','vulnerability']},
+  {key:'CSM',kws:['csm','customer service management','modernize customer']},
   {key:'Now Assist/AI',kws:['now assist','now ai']},
 ];
 
 function classify(q){
   const l=q.toLowerCase();
-  // low performers — check before product keywords to avoid false matches
-  if(l.includes('low')||l.includes('worst')||l.includes('least')||l.includes('bottom')||l.includes('underperform')||l.includes('not downloaded')||l.includes('poor')||(l.includes('no')+l.includes('download')>1)) return {t:'low'};
+  if(l.includes('low')||l.includes('worst')||l.includes('least')||l.includes('bottom')||l.includes('underperform')) return {t:'low'};
   if(l.includes('product')&&(l.includes('break')||l.includes('all')||l.includes('overview')||l.includes('compare')||l.includes('area'))) return {t:'overview'};
   for(const {key,kws} of productAliases) if(kws.some(k=>l.includes(k))) return {t:'product',key};
   if(l.includes('top')&&l.includes('download')) return {t:'top'};
@@ -536,7 +941,6 @@ function classify(q){
   return {t:'default'};
 }
 
-// ── CHAT ENGINE ─────────────────────────────────────────────────────────────
 const msgEl=document.getElementById('messages');
 const inEl=document.getElementById('input');
 let started=false;
@@ -544,35 +948,32 @@ let started=false;
 function hideWelcome(){if(!started){document.getElementById('welcome').style.display='none';started=true;}}
 
 function addMsg(html,type){
-  const m=document.createElement('div'); m.className=`msg ${type}`;
-  const a=document.createElement('div'); a.className=`av ${type==='user'?'user-av':'bot'}`; a.textContent=type==='user'?'YOU':'B';
-  const b=document.createElement('div'); b.className=`bubble ${type==='user'?'user':'bot'}`; b.innerHTML=html;
-  m.appendChild(a); m.appendChild(b); msgEl.appendChild(m); msgEl.scrollTop=msgEl.scrollHeight;
+  const m=document.createElement('div');m.className=`msg ${type}`;
+  const a=document.createElement('div');a.className=`av ${type==='user'?'user-av':'bot'}`;a.textContent=type==='user'?'YOU':'B';
+  const b=document.createElement('div');b.className=`bubble ${type==='user'?'user':'bot'}`;b.innerHTML=html;
+  m.appendChild(a);m.appendChild(b);msgEl.appendChild(m);msgEl.scrollTop=msgEl.scrollHeight;
 }
 
 function addTyping(){
-  const m=document.createElement('div'); m.className='msg bot'; m.id='typing';
-  const a=document.createElement('div'); a.className='av bot'; a.textContent='B';
-  const b=document.createElement('div'); b.className='bubble bot'; b.innerHTML='<div class="typing"><span></span><span></span><span></span></div>';
-  m.appendChild(a); m.appendChild(b); msgEl.appendChild(m); msgEl.scrollTop=msgEl.scrollHeight;
+  const m=document.createElement('div');m.className='msg bot';m.id='typing';
+  const a=document.createElement('div');a.className='av bot';a.textContent='B';
+  const b=document.createElement('div');b.className='bubble bot';b.innerHTML='<div class="typing"><span></span><span></span><span></span></div>';
+  m.appendChild(a);m.appendChild(b);msgEl.appendChild(m);msgEl.scrollTop=msgEl.scrollHeight;
 }
 
 function rmTyping(){const t=document.getElementById('typing');if(t)t.remove();}
 function quickQuery(q){inEl.value=q;sendMessage();}
 
 function sendMessage(){
-  const q=inEl.value.trim(); if(!q)return;
-  hideWelcome(); inEl.value=''; autoResize(inEl);
-  addMsg(q,'user'); addTyping();
+  const q=inEl.value.trim();if(!q)return;
+  hideWelcome();inEl.value='';autoResize(inEl);
+  addMsg(q,'user');addTyping();
   setTimeout(()=>{
     rmTyping();
     const intent=classify(q);
     let html='';
     if(intent.t==='overview') html=r_product_overview();
-    else if(intent.t==='product'){
-      const p=products.find(x=>x.name===intent.key);
-      html=p?r_product(p):r_default(q);
-    }
+    else if(intent.t==='product'){const p=products.find(x=>x.name===intent.key);html=p?r_product(p):r_default(q);}
     else if(intent.t==='top') html=r_top_downloads();
     else if(intent.t==='low') html=r_low_performers();
     else if(intent.t==='exports') html=r_exports();
@@ -580,14 +981,8 @@ function sendMessage(){
     else html=r_default(q);
     addMsg(html,'bot');
     setTimeout(()=>{
-      document.querySelectorAll('.bar-fill').forEach(bar=>{
-        const w=bar.style.width; bar.style.width='0';
-        requestAnimationFrame(()=>{bar.style.width=w;});
-      });
-      document.querySelectorAll('.pc-bar-fill').forEach(bar=>{
-        const w=bar.style.width; bar.style.width='0';
-        requestAnimationFrame(()=>{bar.style.width=w;});
-      });
+      document.querySelectorAll('.bar-fill').forEach(bar=>{const w=bar.style.width;bar.style.width='0';requestAnimationFrame(()=>{bar.style.width=w;});});
+      document.querySelectorAll('.pc-bar-fill').forEach(bar=>{const w=bar.style.width;bar.style.width='0';requestAnimationFrame(()=>{bar.style.width=w;});});
     },50);
   },500+Math.random()*350);
 }
