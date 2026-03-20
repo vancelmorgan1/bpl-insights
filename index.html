@@ -232,34 +232,40 @@ textarea:focus{border-color:var(--accent-mid);}
       <div class="messages" id="messages">
         <div class="welcome" id="welcome">
           <div class="welcome-icon">B</div>
-          <h2>Ask about any BPL asset</h2>
-          <p>Powered by Claude with the full 869-asset Now Create dataset. Ask about any product area, specific asset, download patterns, or content gaps.</p>
+          <h2>Ask Claude about BPL assets</h2>
+          <p>Type your question below. We'll build a prompt with the full 869-asset dataset and copy it to your clipboard — then open Claude for you. Just paste and go.</p>
+          <div style="margin-top:14px;padding:10px 14px;background:var(--tg-bg);border:1px solid #b6dfc8;border-radius:8px;font-size:12px;color:var(--tg-t);max-width:440px;line-height:1.6;">
+            ✓ Works with your existing Claude.ai access<br>
+            ✓ Full dataset included in every prompt<br>
+            ✓ No API key or infrastructure needed
+          </div>
           <div class="chips">
-            <div class="chip" onclick="quickQuery('Which Financial Services assets have the most lifetime downloads?')">Financial Services top assets</div>
-            <div class="chip" onclick="quickQuery('What HRSD assets exist and how do they perform?')">HRSD asset overview</div>
-            <div class="chip" onclick="quickQuery('Show me Now Assist assets sorted by lifetime downloads — top 20')">Now Assist/AI assets</div>
-            <div class="chip" onclick="quickQuery('Which assets have the highest view-to-download ratio?')">High views, low downloads</div>
-            <div class="chip" onclick="quickQuery('What product areas have the most assets but fewest downloads per asset?')">Coverage gaps</div>
-            <div class="chip" onclick="quickQuery('List all Scoping Guide assets with their download counts')">All Scoping Guides</div>
-            <div class="chip" onclick="quickQuery('Compare ITSM vs CMDB/CSDM in total assets and lifetime downloads')">ITSM vs CMDB/CSDM</div>
-            <div class="chip" onclick="quickQuery('Which assets have zero period downloads but over 5000 lifetime downloads?')">Hidden high performers</div>
+            <div class="chip" onclick="quickQuery('Which Financial Services assets have the most lifetime downloads? Show a ranked table with asset name, type, lifetime downloads, and lifetime views.')">Financial Services top assets</div>
+            <div class="chip" onclick="quickQuery('What HRSD assets exist? Show all of them ranked by lifetime downloads with asset type and view-to-download ratio.')">HRSD asset overview</div>
+            <div class="chip" onclick="quickQuery('Show me all Now Assist/AI assets sorted by lifetime downloads — top 25. Include asset type and note any with unusually high view-to-download ratios.')">Now Assist/AI assets</div>
+            <div class="chip" onclick="quickQuery('Which assets have the highest view-to-download ratio (lifetime views ÷ lifetime downloads)? Show top 20. High ratio means people browse but don\'t download.')">High views, low downloads</div>
+            <div class="chip" onclick="quickQuery('Which product areas have the most assets but the lowest average downloads per asset? Show a table of bucket, asset count, total lifetime downloads, and average per asset.')">Coverage gaps</div>
+            <div class="chip" onclick="quickQuery('List all Scoping Guide assets with their bucket, lifetime downloads, and lifetime views, sorted by downloads.')">All Scoping Guides</div>
+            <div class="chip" onclick="quickQuery('Compare ITSM vs CMDB/CSDM: total assets, total lifetime downloads, average downloads per asset, and top 5 assets in each.')">ITSM vs CMDB/CSDM</div>
+            <div class="chip" onclick="quickQuery('Which assets have over 5,000 lifetime downloads but zero period downloads (not in the Adobe Oct–Mar export)? These are hidden high performers worth investigating.')">Hidden high performers</div>
           </div>
         </div>
       </div>
       <div class="input-area">
+        <div id="copy-status" style="display:none;margin-bottom:8px;padding:8px 12px;background:var(--tg-bg);border:1px solid #b6dfc8;border-radius:6px;font-size:12px;color:var(--tg-t);"></div>
         <div class="input-row">
           <div style="flex:1;">
             <textarea id="input" placeholder="Ask anything about BPL assets, products, or download performance…" rows="1"
               onkeydown="handleKey(event)" oninput="autoResize(this)"></textarea>
           </div>
-          <button class="send-btn" id="send-btn" onclick="sendMessage()">
+          <button class="send-btn" id="send-btn" onclick="sendMessage()" title="Copy prompt &amp; open Claude">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
               <line x1="22" y1="2" x2="11" y2="13"></line>
               <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
             </svg>
           </button>
         </div>
-        <div class="input-hint">Claude API · All 869 assets · Now Create taxonomy · Oct 1 2025 – Mar 20 2026</div>
+        <div class="input-hint">↑ Copies a data-rich prompt to clipboard and opens Claude.ai — paste to get your answer</div>
       </div>
     </div>
   </div>
@@ -391,128 +397,91 @@ function selectAsset(number) {
 const msgEl = document.getElementById('messages');
 const inEl = document.getElementById('input');
 let started = false;
-let chatHistory = [];
+function quickQuery(q) { inEl.value=q; sendMessage(); }
+function goChat(q) { switchTab('chat'); quickQuery(q); }
 
-// Build a compact system prompt with the full dataset as context
-function buildSystemPrompt() {
-  // Summarize the dataset compactly for the API context
+function buildPrompt(question) {
+  // Bucket summary
   const bucketSummary = {};
   ASSETS.forEach(a => {
-    if (!bucketSummary[a.bucket]) bucketSummary[a.bucket] = {count:0, lifetime_dl:0, period_dl:0, adobe:0};
+    if (!bucketSummary[a.bucket]) bucketSummary[a.bucket] = {count:0,ldl:0,pdl:0};
     bucketSummary[a.bucket].count++;
-    bucketSummary[a.bucket].lifetime_dl += a.lifetime_dl;
-    bucketSummary[a.bucket].period_dl += a.period_dl;
-    if (a.in_adobe) bucketSummary[a.bucket].adobe++;
+    bucketSummary[a.bucket].ldl += a.lifetime_dl;
+    bucketSummary[a.bucket].pdl += a.period_dl;
   });
-
   const bucketLines = Object.entries(bucketSummary)
-    .sort((a,b) => b[1].lifetime_dl - a[1].lifetime_dl)
-    .map(([b,d]) => `${b}: ${d.count} assets, ${d.lifetime_dl.toLocaleString()} lifetime dl, ${d.period_dl.toLocaleString()} period dl (${d.adobe} in Adobe)`)
+    .sort((a,b) => b[1].ldl - a[1].ldl)
+    .map(([b,d]) => `${b}: ${d.count} assets, ${d.ldl.toLocaleString()} lifetime dl, ${d.pdl.toLocaleString()} period dl`)
     .join('\n');
 
-  // Include top 50 assets by lifetime downloads for quick reference
-  const top50 = [...ASSETS].sort((a,b) => b.lifetime_dl - a.lifetime_dl).slice(0,50);
-  const top50Lines = top50.map(a =>
-    `${a.name} | ${a.bucket} | ${a.asset_type} | lifetime:${a.lifetime_dl} | views:${a.lifetime_views} | period:${a.period_dl}`
+  // Full asset list as compact CSV
+  const csvHeader = 'name,bucket,asset_type,lifetime_dl,lifetime_views,period_dl,in_adobe';
+  const csvRows = ASSETS.map(a =>
+    `"${a.name}",${a.bucket},"${a.asset_type||''}",${a.lifetime_dl},${a.lifetime_views},${a.period_dl},${a.in_adobe}`
   ).join('\n');
 
-  // Pass full asset list as JSON (the model can reference it)
-  const fullData = JSON.stringify(ASSETS.map(a => ({
-    n: a.name, b: a.bucket, t: a.asset_type, ldl: a.lifetime_dl, lv: a.lifetime_views, pdl: a.period_dl, adobe: a.in_adobe
-  })));
+  return `You are an analytics assistant for the ServiceNow Best Practices Library (BPL). I have the complete Now Create asset catalog — 869 assets with download data.
 
-  return `You are BPL Insights, an analytics assistant for the ServiceNow Best Practices Library (BPL). You have access to the complete Now Create asset catalog — 869 assets with lifetime downloads, lifetime views, and period download data (Oct 1 2025 – Mar 20 2026 from Adobe Analytics).
+DATASET CONTEXT:
+- Period: Oct 1, 2025 – Mar 20, 2026 (Adobe Analytics)
+- Lifetime data: all-time snapshot from Now Create, Mar 18 2026
+- Only 53 assets appear in the Adobe period export (top performers). period_dl=0 + in_adobe=false means not tracked, NOT zero downloads.
+- View-to-download ratio = lifetime_views ÷ lifetime_dl. High ratio = people browse but don't download.
 
 PRODUCT BUCKET SUMMARY:
 ${bucketLines}
 
-TOP 50 ASSETS BY LIFETIME DOWNLOADS:
-${top50Lines}
+FULL ASSET DATA (CSV):
+${csvHeader}
+${csvRows}
 
-FULL DATASET (JSON — name, bucket, type, lifetime_dl, lifetime_views, period_dl, in_adobe):
-${fullData}
+MY QUESTION:
+${question}
 
-When answering:
-- Use tables for ranked lists (use markdown table format)
-- Cite specific numbers from the data
-- Period downloads (pdl) are only available for 53 assets in the Adobe export. If pdl=0 and adobe=false, the asset simply wasn't in the top-tracked assets — not that it had zero downloads.
-- Lifetime data is an all-time snapshot from Mar 18, 2026 from the Now Create system.
-- View-to-download ratio (lifetime_views/lifetime_dl) signals engagement depth. High ratio = people browse but don't download.
-- Be concise and analytical. Writers want actionable insights.`;
+Please answer with specific numbers from the data. Use tables for ranked lists.`;
 }
 
-function hideWelcome() {
-  if (!started) { document.getElementById('welcome').style.display='none'; started=true; }
+function showStatus(msg, isError) {
+  const el = document.getElementById('copy-status');
+  el.textContent = msg;
+  el.style.display = 'block';
+  el.style.background = isError ? 'var(--tr-bg)' : 'var(--tg-bg)';
+  el.style.borderColor = isError ? '#fca5a5' : '#b6dfc8';
+  el.style.color = isError ? 'var(--tr-t)' : 'var(--tg-t)';
+  setTimeout(() => { el.style.display = 'none'; }, 4000);
 }
 
-function addMsg(html, type) {
-  const m = document.createElement('div'); m.className = `msg ${type}`;
-  const a = document.createElement('div'); a.className = `av ${type==='user'?'usr':'bot'}`; a.textContent = type==='user'?'YOU':'B';
-  const b = document.createElement('div'); b.className = `bubble ${type==='user'?'user':'bot'}`;
-  if (type === 'bot') {
-    b.innerHTML = marked ? marked.parse(html) : html.replace(/\n/g,'<br>');
-  } else {
-    b.textContent = html;
-  }
-  m.appendChild(a); m.appendChild(b);
-  msgEl.appendChild(m);
-  msgEl.scrollTop = msgEl.scrollHeight;
-}
+function sendMessage() {
+  const q = inEl.value.trim();
+  if (!q) return;
+  hideWelcome();
 
-function addTyping() {
-  const m = document.createElement('div'); m.className='msg bot'; m.id='typing';
-  const a = document.createElement('div'); a.className='av bot'; a.textContent='B';
-  const b = document.createElement('div'); b.className='bubble bot';
-  b.innerHTML='<div class="typing-bub"><span></span><span></span><span></span></div>';
-  m.appendChild(a); m.appendChild(b); msgEl.appendChild(m);
-  msgEl.scrollTop = msgEl.scrollHeight;
-}
-function rmTyping() { const t=document.getElementById('typing'); if(t) t.remove(); }
+  const prompt = buildPrompt(q);
 
-function quickQuery(q) { inEl.value=q; sendMessage(); }
-function goChat(q) { switchTab('chat'); quickQuery(q); }
-
-async function sendMessage() {
-  const q = inEl.value.trim(); if (!q) return;
-  hideWelcome(); inEl.value=''; autoResize(inEl);
+  // Show the question in the chat as a record
   addMsg(q, 'user');
-  chatHistory.push({role:'user', content: q});
-  addTyping();
 
-  const btn = document.getElementById('send-btn');
-  btn.disabled = true;
-
-  try {
-    const response = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {'Content-Type':'application/json'},
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
-        max_tokens: 1000,
-        system: buildSystemPrompt(),
-        messages: chatHistory
-      })
-    });
-    const data = await response.json();
-    rmTyping();
-
-    if (data.content && data.content[0]) {
-      const reply = data.content[0].text;
-      chatHistory.push({role:'assistant', content: reply});
-      addMsg(reply, 'bot');
-    } else {
-      addMsg('Sorry, something went wrong. Please try again.', 'bot');
-    }
-  } catch(err) {
-    rmTyping();
-    addMsg(`Error: ${err.message}`, 'bot');
-  } finally {
-    btn.disabled = false;
-  }
+  // Copy to clipboard
+  navigator.clipboard.writeText(prompt).then(() => {
+    inEl.value = ''; autoResize(inEl);
+    showStatus('✓ Prompt copied to clipboard — opening Claude.ai. Paste your prompt there to get your answer.');
+    addMsg('Your prompt has been copied to clipboard with the full 869-asset dataset included. Claude.ai is opening in a new tab — paste and hit enter.', 'bot');
+    setTimeout(() => window.open('https://claude.ai/new', '_blank'), 300);
+  }).catch(() => {
+    // Clipboard failed — show prompt in a textarea for manual copy
+    showStatus('⚠ Auto-copy failed — please copy the prompt below manually.', true);
+    const ta = document.createElement('textarea');
+    ta.value = prompt;
+    ta.style.cssText = 'width:100%;height:120px;font-size:11px;font-family:monospace;margin-top:8px;border:1px solid var(--border2);border-radius:6px;padding:8px;resize:vertical;';
+    ta.readOnly = true;
+    const wrapper = document.createElement('div');
+    wrapper.appendChild(ta);
+    addMsg('Copy the prompt below, then open <a href="https://claude.ai/new" target="_blank" style="color:var(--accent)">Claude.ai</a> and paste it:', 'bot');
+    const lastMsg = msgEl.lastElementChild.querySelector('.bubble');
+    if (lastMsg) lastMsg.appendChild(wrapper);
+    ta.select();
+  });
 }
-
-function handleKey(e) { if (e.key==='Enter'&&!e.shiftKey) { e.preventDefault(); sendMessage(); } }
-function autoResize(el) { el.style.height='auto'; el.style.height=Math.min(el.scrollHeight,120)+'px'; }
 
 // ─── TABS ───
 function switchTab(tab) {
@@ -522,42 +491,16 @@ function switchTab(tab) {
   document.getElementById('tab-chat').className   = 'tab-btn'+(tab==='chat'?' active':'');
 }
 
-// ─── MARKDOWN (lightweight) ───
-const marked = window.marked || {
-  parse: (text) => text
-    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
-    .replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>')
-    .replace(/\*(.+?)\*/g,'<em>$1</em>')
-    .replace(/^### (.+)$/gm,'<h3>$1</h3>')
-    .replace(/^## (.+)$/gm,'<h3>$1</h3>')
-    .replace(/^---$/gm,'<hr>')
-    .replace(/^\| (.+) \|$/gm, (m) => {
-      const cells = m.slice(1,-1).split('|').map(c=>c.trim());
-      return '<tr>'+cells.map(c=>`<td>${c}</td>`).join('')+'</tr>';
-    })
-    .replace(/(<tr>.+<\/tr>\n?)+/g, (t) => {
-      const rows = t.trim().split('\n');
-      const header = rows[0].replace(/<td>/g,'<th>').replace(/<\/td>/g,'<\/th>');
-      const body = rows.slice(2).join('\n');
-      return `<table>${header}${body}</table>`;
-    })
-    .replace(/^- (.+)$/gm,'<li>$1</li>')
-    .replace(/((<li>.+<\/li>\n?)+)/g,'<ul>$1</ul>')
-    .replace(/\n\n/g,'<br><br>')
-    .replace(/\n/g,'<br>')
-};
+function handleKey(e) { if (e.key==='Enter'&&!e.shiftKey) { e.preventDefault(); sendMessage(); } }
+function autoResize(el) { el.style.height='auto'; el.style.height=Math.min(el.scrollHeight,120)+'px'; }
+
+// ─── INIT ───
+renderBrowse();
 
 // ─── INIT ───
 renderBrowse();
 </script>
 
-<!-- Load marked.js for proper markdown rendering -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/marked/9.1.6/marked.min.js"></script>
-<script>
-// Re-init marked if it loaded
-if (window.marked && window.marked.parse) {
-  // marked.js loaded successfully — already available via window.marked
-}
-</script>
+
 </body>
 </html>
