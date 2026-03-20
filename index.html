@@ -174,14 +174,14 @@ tr:hover td{background:var(--accent-light);cursor:pointer;}
         <div class="stat-sub">in Now Create BPL</div>
       </div>
       <div class="stat-tile">
-        <div class="stat-lbl">Adobe Downloads (Oct–Mar)</div>
+        <div class="stat-lbl">Adobe Analytics Downloads</div>
         <div class="stat-val">105,724</div>
         <div class="stat-sub">Oct 2025 &ndash; Mar 2026</div>
       </div>
       <div class="stat-tile">
-        <div class="stat-lbl">Now Create Downloads (All-time)</div>
+        <div class="stat-lbl">All-Time Downloads</div>
         <div class="stat-val">2,004,426</div>
-        <div class="stat-sub">all-time across all assets</div>
+        <div class="stat-sub">all 869 assets · Now Create + Adobe</div>
       </div>
     </div>
 
@@ -197,8 +197,8 @@ tr:hover td{background:var(--accent-light);cursor:pointer;}
     </div>
     <div class="product-grid" id="product-grid"></div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px;">
-  <div class="note note-green" style="margin:0;">&#9679; <strong>Now Create (All-time)</strong> — Lifetime download &amp; view counts for all 869 assets. Source: Now Create system snapshot, Mar 18 2026. No date filtering possible — this is a point-in-time export.</div>
-  <div class="note note-blue" style="margin:0;">&#9679; <strong>Adobe Analytics (Oct 1, 2025 – Mar 20, 2026)</strong> — Period download data for 53 top-trafficked assets from the OneCX Adobe report suite. To extend this date range, re-export from Adobe and update the data file.</div>
+  <div class="note note-green" style="margin:0;">&#9679; <strong>All-Time Downloads</strong> — Lifetime download &amp; view counts for all 869 assets. Source: Now Create system snapshot, Mar 18 2026. No date filtering possible — this is a point-in-time export.</div>
+  <div class="note note-blue" style="margin:0;">&#9679; <strong>Adobe Analytics Downloads (Oct 2025 – Mar 2026)</strong> — Period download data for 53 top-trafficked assets from the OneCX Adobe report suite. To extend this date range, re-export from Adobe and update the data file.</div>
 </div>
   </div>
 
@@ -394,28 +394,28 @@ function renderProduct(){
       <div class="ph-title">${b} &mdash; Content Performance</div>
       <div class="ph-sub">${s.count} assets</div>
       <div style="display:flex;gap:10px;margin-top:6px;flex-wrap:wrap;">
-        <span style="font-size:11px;padding:2px 10px;border-radius:4px;background:#f0fdf4;color:#166534;border:1px solid #b6dfc8;">&#9679; Now Create — all-time lifetime data (snapshot Mar 18, 2026)</span>
-        <span style="font-size:11px;padding:2px 10px;border-radius:4px;background:#eff6ff;color:#1e40af;border:1px solid #bfdbfe;">&#9679; Adobe Analytics — Oct 1, 2025 – Mar 20, 2026 (${s.adobe_count} of ${s.count} assets tracked)</span>
+        <span style="font-size:11px;padding:2px 10px;border-radius:4px;background:#f0fdf4;color:#166534;border:1px solid #b6dfc8;">&#9679; All-Time Downloads — Now Create platform data (snapshot Mar 18, 2026)</span>
+        <span style="font-size:11px;padding:2px 10px;border-radius:4px;background:#eff6ff;color:#1e40af;border:1px solid #bfdbfe;">&#9679; Adobe Analytics Downloads — Oct 1, 2025 – Mar 20, 2026 (${s.adobe_count} of ${s.count} assets tracked)</span>
       </div>
       <div class="ph-stats">
         <div class="ph-stat"><div class="ph-stat-lbl">Total Assets</div><div class="ph-stat-val">${s.count}</div></div>
-        <div class="ph-stat"><div class="ph-stat-lbl">Now Create (All-time)</div><div class="ph-stat-val">${fmtk(s.total_dl)}</div><div class="ph-stat-sub">all-time</div></div>
+        <div class="ph-stat"><div class="ph-stat-lbl">All-Time Downloads</div><div class="ph-stat-val">${fmtk(s.total_dl)}</div><div class="ph-stat-sub">all-time</div></div>
         <div class="ph-stat"><div class="ph-stat-lbl">Avg per Asset</div><div class="ph-stat-val">${fmtk(s.avg_dl)}</div><div class="ph-stat-sub">global avg ${fmtk(BENCH.global.avg)}</div></div>
-        <div class="ph-stat"><div class="ph-stat-lbl">Adobe (Oct–Mar)</div><div class="ph-stat-val">${fmtk(s.period_dl)}</div><div class="ph-stat-sub">Oct&ndash;Mar &middot; ${s.adobe_count} tracked</div></div>
+        <div class="ph-stat"><div class="ph-stat-lbl">Adobe Analytics (Oct–Mar)</div><div class="ph-stat-val">${fmtk(s.period_dl)}</div><div class="ph-stat-sub">Oct&ndash;Mar &middot; ${s.adobe_count} tracked</div></div>
       </div>
     </div>
     ${attBanner}
     <div class="table-wrap">
       <div class="table-toolbar">
         <div class="table-toolbar-title">${assets.length} assets &mdash; click any row for full detail</div>
-        ${[['ldl','Now Create (All-time)'],['pdl','Adobe (Oct–Mar)'],['vtd','View/DL'],['n','Name']].map(([c,l])=>
+        ${[['ldl','All-Time Downloads'],['pdl','Adobe Analytics (Oct–Mar)'],['vtd','View/DL'],['n','Name']].map(([c,l])=>
           `<button class="sort-btn${sortCol===c?' on':''}" onclick="setSort('${c}')">${l}</button>`).join('')}
       </div>
       <table>
         <thead><tr>
           ${sh('n','Asset')}
-          ${sh('ldl','Now Create (All-time)')}
-          ${sh('pdl','Adobe (Oct–Mar)')}
+          ${sh('ldl','All-Time Downloads')}
+          ${sh('pdl','Adobe Analytics (Oct–Mar)')}
           ${sh('vtd','View/DL')}
           <th>Signal</th>
         </tr></thead>
@@ -513,7 +513,7 @@ function renderAsset(a){
       <div style="font-size:11px;color:var(--text3);font-family:'IBM Plex Mono',monospace;margin-top:4px;">${a.id}${a.s?' &middot; '+a.s:''}</div>
       <div class="ad-stats">
         <div class="ad-stat">
-          <div class="ad-stat-lbl">Now Create (All-time)</div>
+          <div class="ad-stat-lbl">All-Time Downloads</div>
           <div class="ad-stat-val">${fmt(a.ldl)}</div>
           <div class="ad-stat-sub">#${rankTop} of ${peers.length} in ${a.b}</div>
         </div>
@@ -523,9 +523,9 @@ function renderAsset(a){
           <div class="ad-stat-sub">${vtd}&times; view/download ratio</div>
         </div>
         <div class="ad-stat">
-          <div class="ad-stat-lbl">Adobe (Oct–Mar)</div>
+          <div class="ad-stat-lbl">Adobe Analytics (Oct–Mar)</div>
           <div class="ad-stat-val">${a.adobe?fmt(a.pdl):'&mdash;'}</div>
-          <div class="ad-stat-sub">${a.adobe?'Oct&ndash;Mar 2026 (Adobe tracked)':'Not in Adobe top-53 export'}</div>
+          <div class="ad-stat-sub">${a.adobe?'Adobe Analytics · Oct–Mar 2026':'Not in Adobe top-53 export'}</div>
         </div>
         <div class="ad-stat">
           <div class="ad-stat-lbl">Area Rank</div>
@@ -537,13 +537,13 @@ function renderAsset(a){
     </div>
     <div class="two-col">
       <div class="bc-card">
-        <div class="bc-title">Benchmark &mdash; Now Create Downloads</div>
+        <div class="bc-title">Benchmark &mdash; All-Time Downloads</div>
         ${benchHtml}
       </div>
       <div class="bc-card">
         <div class="bc-title">Similar Assets in ${a.b}</div>
         <table>
-          <thead><tr><th>Asset</th><th>Now Create (All-time)</th><th>Adobe (Oct–Mar)</th></tr></thead>
+          <thead><tr><th>Asset</th><th>All-Time Downloads</th><th>Adobe Analytics (Oct–Mar)</th></tr></thead>
           <tbody>${simRows}</tbody>
         </table>
       </div>
