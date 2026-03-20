@@ -4,7 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>BPL Insights — Content Analytics</title>
-<script src="assets.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -33,7 +32,7 @@ header{background:var(--surface);border-bottom:1px solid var(--border);padding:0
 .page{max-width:1280px;margin:0 auto;padding:24px 32px;}
 
 /* ── HOME: OVERVIEW STATS ── */
-.overview-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:28px;}
+.overview-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:28px;}
 .stat-tile{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px 18px;box-shadow:var(--shadow);}
 .stat-tile-lbl{font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px;font-family:'IBM Plex Mono',monospace;}
 .stat-tile-val{font-size:28px;font-weight:700;color:var(--text);line-height:1;}
@@ -197,11 +196,6 @@ table.asset-tbl tr:hover td{background:var(--accent-light);cursor:pointer;}
         <div class="stat-tile-val">2,004,426</div>
         <div class="stat-tile-sub">all-time across 869 assets</div>
       </div>
-      <div class="stat-tile">
-        <div class="stat-tile-lbl">Median Asset Downloads</div>
-        <div class="stat-tile-val">1,044</div>
-        <div class="stat-tile-sub"><span class="stat-tile-hi">Top 10%</span> exceed 6,144</div>
-      </div>
     </div>
 
     <!-- Search -->
@@ -288,6 +282,7 @@ function getSignal(asset) {
 
 // ── PRODUCT GRID ──
 function buildProductGrid() {
+  if (typeof ASSETS === 'undefined') return;
   const buckets = Object.entries(BENCH.by_bucket).sort((a,b) => b[1].total_dl - a[1].total_dl);
   const maxDl = buckets[0][1].total_dl;
   document.getElementById('product-grid').innerHTML = buckets.map(([bucket, s]) => {
@@ -314,6 +309,7 @@ function onSearch(q) {
 }
 
 function doSearch(q) {
+  if (typeof ASSETS === 'undefined') return;
   const box = document.getElementById('search-results');
   const trimmed = q.trim().toLowerCase();
   if (!trimmed) { box.classList.remove('open'); return; }
@@ -617,8 +613,8 @@ function showHome() {
   window.scrollTo(0,0);
 }
 
-// ── INIT ──
-buildProductGrid();
+// ── INIT ── (triggered by assets.js onload)
 </script>
+<script src="assets.js" onload="buildProductGrid()"></script>
 </body>
 </html>
